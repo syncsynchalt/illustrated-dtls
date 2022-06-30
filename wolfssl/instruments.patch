@@ -1,0 +1,159 @@
+diff --git a/src/ssl.c b/src/ssl.c
+index 202577d..1d25a61 100644
+--- a/src/ssl.c
++++ b/src/ssl.c
+@@ -11728,8 +11728,13 @@ int wolfSSL_DTLS_SetCookieSecret(WOLFSSL* ssl,
+ 
+     /* If the supplied secret is NULL, randomly generate a new secret. */
+     if (secret == NULL) {
++#if 0
+         ret = wc_RNG_GenerateBlock(ssl->rng,
+                              ssl->buffers.dtlsCookieSecret.buffer, secretSz);
++#else
++        for (size_t i = 0; i < secretSz; i++) ssl->buffers.dtlsCookieSecret.buffer[i] = 'A' + i;
++        ret = 0;
++#endif
+     }
+     else
+         XMEMCPY(ssl->buffers.dtlsCookieSecret.buffer, secret, secretSz);
+@@ -38064,6 +38069,7 @@ int wolfSSL_RAND_pseudo_bytes(unsigned char* buf, int num)
+     int hash;
+     byte secret[DRBG_SEED_LEN]; /* secret length arbitraily choosen */
+ 
++abort();
+ #ifndef WOLFSSL_NO_OPENSSL_RAND_CB
+     if (wolfSSL_RAND_InitMutex() == 0 && wc_LockMutex(&gRandMethodMutex) == 0) {
+         if (gRandMethods && gRandMethods->pseudorand) {
+@@ -38129,6 +38135,7 @@ int wolfSSL_RAND_bytes(unsigned char* buf, int num)
+         /* return code compliant with OpenSSL */
+         return 0;
+ 
++abort();
+     /* if a RAND callback has been set try and use it */
+ #ifndef WOLFSSL_NO_OPENSSL_RAND_CB
+     if (wolfSSL_RAND_InitMutex() == 0 && wc_LockMutex(&gRandMethodMutex) == 0) {
+diff --git a/src/tls13.c b/src/tls13.c
+index 15936fa..6f40fba 100644
+--- a/src/tls13.c
++++ b/src/tls13.c
+@@ -3428,9 +3428,13 @@ int SendTls13ClientHello(WOLFSSL* ssl)
+     }
+     /* Client Random */
+     if (ssl->options.connectState == CONNECT_BEGIN) {
++#if 0
+         ret = wc_RNG_GenerateBlock(ssl->rng, args->output + args->idx, RAN_LEN);
+         if (ret != 0)
+             return ret;
++#else
++        for (size_t i = 0; i < RAN_LEN; i++) *(args->output + args->idx + i) = 0xe0 + i;
++#endif
+ 
+         /* Store random for possible second ClientHello. */
+         XMEMCPY(ssl->arrays->clientRandom, args->output + args->idx, RAN_LEN);
+@@ -5455,8 +5459,12 @@ int SendTls13ServerHello(WOLFSSL* ssl, byte extMsgType)
+ 
+     if (extMsgType == server_hello) {
+         /* Generate server random. */
++#if 0
+         if ((ret = wc_RNG_GenerateBlock(ssl->rng, output + idx, RAN_LEN)) != 0)
+             return ret;
++#else
++        for (size_t i = 0; i < RAN_LEN; i++) *(output + idx + i) = 0x70 + i;
++#endif
+     }
+     else {
+         /* HelloRetryRequest message has fixed value for random. */
+diff --git a/wolfcrypt/src/curve25519.c b/wolfcrypt/src/curve25519.c
+index 9f64234..0360fb6 100644
+--- a/wolfcrypt/src/curve25519.c
++++ b/wolfcrypt/src/curve25519.c
+@@ -200,7 +200,12 @@ int wc_curve25519_make_priv(WC_RNG* rng, int keysize, byte* key)
+         return ECC_BAD_ARG_E;
+ 
+     /* random number for private key */
++#if 0
+     ret = wc_RNG_GenerateBlock(rng, key, keysize);
++#else
++    for (size_t i = 0; i < 32; i++) key[i] = 0x20 + i;
++    ret = 0;
++#endif
+     if (ret == 0) {
+         /* Clamp the private key */
+         ret = curve25519_priv_clamp(key);
+diff --git a/wolfcrypt/src/random.c b/wolfcrypt/src/random.c
+index 03f5167..1506e23 100644
+--- a/wolfcrypt/src/random.c
++++ b/wolfcrypt/src/random.c
+@@ -78,12 +78,14 @@ int wc_InitRng(WC_RNG* rng)
+ 
+ int wc_RNG_GenerateBlock(WC_RNG* rng, byte* b, word32 sz)
+ {
++// abort();
+     return RNG_GenerateBlock_fips(rng, b, sz);
+ }
+ 
+ 
+ int wc_RNG_GenerateByte(WC_RNG* rng, byte* b)
+ {
++// abort();
+     return RNG_GenerateByte(rng, b);
+ }
+ 
+@@ -981,6 +983,7 @@ int wc_InitRngNonce_ex(WC_RNG* rng, byte* nonce, word32 nonceSz,
+ WOLFSSL_ABI
+ int wc_RNG_GenerateBlock(WC_RNG* rng, byte* output, word32 sz)
+ {
++// abort();
+     int ret;
+ 
+     if (rng == NULL || output == NULL)
+@@ -1081,6 +1084,7 @@ int wc_RNG_GenerateBlock(WC_RNG* rng, byte* output, word32 sz)
+ 
+ int wc_RNG_GenerateByte(WC_RNG* rng, byte* b)
+ {
++// abort();
+     return wc_RNG_GenerateBlock(rng, b, 1);
+ }
+ 
+@@ -2880,6 +2884,7 @@ int wc_GenerateSeed(OS_Seed* os, byte* output, word32 sz)
+ #include <fcntl.h>
+ int wc_hwrng_generate_block(byte *output, word32 sz)
+ {
++// abort();
+     int fd;
+     int len;
+     int ret = 0;
+diff --git a/wolfcrypt/src/rsa.c b/wolfcrypt/src/rsa.c
+index 3e626b0..6396d45 100644
+--- a/wolfcrypt/src/rsa.c
++++ b/wolfcrypt/src/rsa.c
+@@ -1376,7 +1376,12 @@ static int RsaPad_PSS(const byte* input, word32 inputLen, byte* pkcsBlock,
+     m += inputLen;
+     o = 0;
+     if (saltLen > 0) {
++#if 0
+         ret = wc_RNG_GenerateBlock(rng, salt, saltLen);
++#else
++        if (rng) for (ssize_t ii = 0; ii < saltLen; ii++) salt[ii] = 0x12;
++        ret = 0;
++#endif
+         if (ret == 0) {
+             XMEMCPY(m, salt, saltLen);
+             m += saltLen;
+diff --git a/wolfcrypt/src/wolfmath.c b/wolfcrypt/src/wolfmath.c
+index d6772ea..0a06b9e 100644
+--- a/wolfcrypt/src/wolfmath.c
++++ b/wolfcrypt/src/wolfmath.c
+@@ -178,7 +178,12 @@ int mp_rand(mp_int* a, int digits, WC_RNG* rng)
+ #endif
+     /* fill the data with random bytes */
+     if (ret == MP_OKAY) {
++#if 0
+         ret = wc_RNG_GenerateBlock(rng, (byte*)a->dp, cnt);
++#else
++        for (int ii = 0; ii < cnt; ii++) ((byte*)a->dp)[ii] = 0x13;
++        ret = 0;
++#endif
+     }
+     if (ret == MP_OKAY) {
+ #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
