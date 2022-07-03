@@ -5,4 +5,8 @@ wolfssl/share
 wolfssl/wolfssl
 server/server
 client/client
+captures/caps/sn_removal
+captures/caps/aes_128_gcm_decrypt*
+captures/caps/*-unprot
+captures/caps/*-dec
 /.idea

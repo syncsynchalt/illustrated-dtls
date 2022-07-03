@@ -31,6 +31,10 @@ lib: wolfssl/stamp.built
 clean:
 	rm -rf wolfssl include lib bin share
 
+rebuild:
+	rm -f wolfssl/stamp.built
+	$(MAKE) lib
+
 build: wolfssl/stamp.built
 
 checkout: wolfssl/autogen.sh
@@ -39,5 +43,6 @@ patch: wolfssl/stamp.patched
 
 reconfig:
 	rm -f wolfssl/Makefile
+	$(MAKE) lib
 
 .PHONY: all link clean

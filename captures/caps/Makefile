@@ -1,35 +1,66 @@
-TARGETS=serverextensions servercert servercertverify serverfinished \
-	clientfinished clientdata serverticket1 serverticket2 serverdata
+PROT_PACKETS=$(wildcard *-prot)
+UNPROT_PACKETS=$(patsubst %-prot, %-unprot, $(PROT_PACKETS))
+DECRYPT_PACKETS=$(patsubst %-prot, %-dec, $(PROT_PACKETS))
+TARGETS=encextensions cert cverify
+
+OSSL_DIR=/usr/local/Cellar/openssl@3/3.0.3
 all: cleartargets targets
-targets: aes_256_gcm_decrypt
-    $(MAKE) $(TARGETS)
+targets: aes_128_gcm_decrypt sn_removal
+	$(MAKE) $(TARGETS)
 
-aes_256_gcm_decrypt.c:
-    curl -sO https://tls13.xargs.org/files/aes_256_gcm_decrypt.c
+aes_128_gcm_decrypt.c:
+	curl -sO https://quic.xargs.org/files/aes_128_gcm_decrypt.c
 
-aes_256_gcm_decrypt: aes_256_gcm_decrypt.c
-    cc -I ../../openssl/openssl/include \
-        -o aes_256_gcm_decrypt aes_256_gcm_decrypt.c \
-        -L ../../openssl -lssl -lcrypto
+aes_128_gcm_decrypt: aes_128_gcm_decrypt.c
+	cc -Wall -I $(OSSL_DIR)/include -o $@ $^ -L $(OSSL_DIR)/lib -lssl -lcrypto
 
-S_HS_KEY=9f13575ce3f8cfc1df64a77ceaffe89700b492ad31b4fab01c4792be1b266b7f
-S_HS_IV=9563bc8b590f671f488d2da3
-C_HS_KEY=1135b4826a9a70257e5a391ad93093dfd7c4214812f493b3e3daae1eb2b1ac69
-C_HS_IV=4256d2e0e88babdd05eb2f27
+sn_removal: sn_removal.c
+	cc -Wall -I $(OSSL_DIR)/include -o $@ $^ -L $(OSSL_DIR)/lib -lssl -lcrypto
 
-S_AP_KEY=01f78623f17e3edcc09e944027ba3218d57c8e0db93cd3ac419309274700ac27
-S_AP_IV=196a750b0c5049c0cc51a541
-C_AP_KEY=de2f4c7672723a692319873e5c227606691a32d1c59d8b9f51dbb9352e9ca9cc
-C_AP_IV=bb007956f474b25de902432f
+S_SN_KEY=7173fac51194e775001d625ef69d7c9f
+C_SN_KEY=beed6218676635c2cb46a45694144fec
+
+S_HS_KEY=004e03e64ab6cba6b542775ec230e20a
+S_HS_IV=6d9924be044ee97c624913f2
+C_HS_KEY=6caa2633d5e48f10051e69dc45549c97
+C_HS_IV=106dc6e393b7a9ea8ef29dd7
+
+S_AP_KEY=xxx
+S_AP_IV=xxx
+C_AP_KEY=xxx
+C_AP_IV=xxx
 
 cleartargets:
-    rm -f $(TARGETS)
+	rm -f $(TARGETS)
 
+%-unprot: %-prot
+	if echo $^ | grep -q -- -c-; then ./sn_removal $(C_SN_KEY) < $^ > $@; else ./sn_removal $(S_SN_KEY) < $^ > $@; fi
 
+03-s-enc-ext-dec: 03-s-enc-ext-unprot
+	./decrypt.sh $(S_HS_KEY) $(S_HS_IV) 5 $^ $@
 
+04-s-cert-dec: 04-s-cert-unprot
+	./decrypt.sh $(S_HS_KEY) $(S_HS_IV) 5 $^ $@
+
+05-s-cverify-dec: 05-s-cverify-unprot
+	./decrypt.sh $(S_HS_KEY) $(S_HS_IV) 5 $^ $@
+
+06-s-fin-dec: 06-s-fin-unprot
+	./decrypt.sh $(S_HS_KEY) $(S_HS_IV) 5 $^ $@
+
+### consider getting rid of these
+encextensions: 03-s-enc-ext-dec
+	cp $^ $@
+
+cert: 04-s-cert-dec
+	cp $^ $@
+
+cverify: 05-s-cverify-dec
+	cp $^ $@
 
 clean:
-    rm -f aes_256_gcm_decrypt aes_256_gcm_decrypt.c
-    rm -f $(TARGETS)
+	rm -f *-unprot *-dec
+	rm -f aes_128_gcm_decrypt aes_128_gcm_decrypt.c sn_removal
+	rm -f $(TARGETS)
 
 .PHONY: clean cleartargets targets all

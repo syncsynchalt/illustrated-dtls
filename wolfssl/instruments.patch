@@ -1,3 +1,12 @@
+diff --git a/.gitignore b/.gitignore
+index c42f7c3..6ce8df1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -390,3 +390,4 @@ cmake_install.cmake
+ # GDB Settings
+ \.gdbinit
+ 
++/stamp.*
 diff --git a/src/ssl.c b/src/ssl.c
 index 202577d..1d25a61 100644
 --- a/src/ssl.c
