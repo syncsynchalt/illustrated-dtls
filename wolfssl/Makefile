@@ -21,19 +21,14 @@ wolfssl/Makefile: wolfssl/configure
 		--enable-sni --enable-dtls --enable-dtls13 --enable-curve25519 \
 		CFLAGS="-DHAVE_SECRET_CALLBACK"
 
-wolfssl/stamp.built: wolfssl/Makefile
+lib: wolfssl/Makefile
 	cd wolfssl && make
-	touch $@
-
-lib: wolfssl/stamp.built
 	cd wolfssl && make install
 
 clean:
 	rm -rf wolfssl include lib bin share
 
-rebuild:
-	rm -f wolfssl/stamp.built
-	$(MAKE) lib
+rebuild: lib
 
 build: wolfssl/stamp.built
 
@@ -45,4 +40,4 @@ reconfig:
 	rm -f wolfssl/Makefile
 	$(MAKE) lib
 
-.PHONY: all link clean
+.PHONY: all link clean lib
