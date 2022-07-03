@@ -68,6 +68,9 @@ void setup_ctx(WOLFSSL_CTX *ctx)
     int groups[] = { WOLFSSL_ECC_X25519 };
     if (wolfSSL_CTX_set_groups(ctx, groups, 1) != SSL_SUCCESS)
         die("can't set groups list");
+    if (wolfSSL_CTX_set_cipher_list(ctx,
+            "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256") != SSL_SUCCESS)
+        die("can't set cipher list");
     wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, 0);
 }
 

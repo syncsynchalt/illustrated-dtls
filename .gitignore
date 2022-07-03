@@ -5,3 +5,4 @@ wolfssl/share
 wolfssl/wolfssl
 server/server
 client/client
+/.idea

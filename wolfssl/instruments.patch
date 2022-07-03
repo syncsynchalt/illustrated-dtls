@@ -64,17 +64,21 @@ index 15936fa..6f40fba 100644
      else {
          /* HelloRetryRequest message has fixed value for random. */
 diff --git a/wolfcrypt/src/curve25519.c b/wolfcrypt/src/curve25519.c
-index 9f64234..0360fb6 100644
+index 9f64234..29dcf2c 100644
 --- a/wolfcrypt/src/curve25519.c
 +++ b/wolfcrypt/src/curve25519.c
-@@ -200,7 +200,12 @@ int wc_curve25519_make_priv(WC_RNG* rng, int keysize, byte* key)
+@@ -200,7 +200,16 @@ int wc_curve25519_make_priv(WC_RNG* rng, int keysize, byte* key)
          return ECC_BAD_ARG_E;
  
      /* random number for private key */
 +#if 0
      ret = wc_RNG_GenerateBlock(rng, key, keysize);
 +#else
-+    for (size_t i = 0; i < 32; i++) key[i] = 0x20 + i;
++    if (getenv("SERVER") && strcmp(getenv("SERVER"), "1") == 0) {
++        for (size_t i = 0; i < 32; i++) key[i] = 0x90 + i;
++    } else {
++        for (size_t i = 0; i < 32; i++) key[i] = 0x20 + i;
++    }
 +    ret = 0;
 +#endif
      if (ret == 0) {

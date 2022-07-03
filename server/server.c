@@ -101,8 +101,6 @@ void setup_ctx(WOLFSSL_CTX *ctx)
         die("can't use server.crt");
     if (wolfSSL_CTX_use_PrivateKey_file(ctx, "server.key", SSL_FILETYPE_PEM) != SSL_SUCCESS)
         die("can't use server.key");
-    if (wolfSSL_CTX_set_cipher_list(ctx, "TLS_AES_256_GCM_SHA384") != SSL_SUCCESS)
-        die("can't set cipher list");
     wolfSSL_CTX_no_ticket_TLSv13(ctx);
 }
 
