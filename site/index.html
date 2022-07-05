@@ -1,0 +1,465 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>The Illustrated DTLS Connection: Every Byte Explained</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="title" content="The Illustrated DTLS Connection"/>
+    <meta name="description" content="Every byte of a DTLS connection explained and reproduced"/>
+    <link rel="stylesheet" href="frombootstrap.css"/>
+    <link rel="stylesheet" href="illustrated.css"/>
+    <script src="illustrated.js"></script>
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://dtls.xargs.org/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Illustrated DTLS Connection: Every Byte Explained">
+    <meta property="og:description" content="Every byte of a DTLS connection explained and reproduced">
+    <meta property="og:image" content="https://dtls.xargs.org/images/og.png">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="dtls.xargs.org">
+    <meta property="twitter:url" content="https://dtls.xargs.org/">
+    <meta name="twitter:title" content="The Illustrated DTLS Connection: Every Byte Explained">
+    <meta name="twitter:description" content="Every byte of a DTLS connection explained and reproduced">
+    <meta name="twitter:image" content="https://dtls.xargs.org/images/og.png">
+
+    <!-- favicons -->
+    <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+</head>
+
+<body class="illustrated">
+<div class="header">
+    <a class="this-page" href="https://dtls.xargs.org">DTLS</a>
+    <a href="https://quic.xargs.org">QUIC</a>
+    <a href="https://x25519.xargs.org">X25519</a>
+    <a href="https://tls13.xargs.org">TLS 1.3</a>
+    <a href="https://tls12.xargs.org">TLS 1.2</a>
+</div>
+<h1>The Illustrated DTLS Connection</h1>
+<div class="container">
+
+    <h3>Every byte explained and reproduced</h3>
+
+    <h5>
+    DTLS is a secure datagram-based communication protocol.
+    </h5>
+
+    <div class="outerblock" style="margin-top: 0.5em">
+    <p>In this demonstration a client connects to a server,
+    negotiates a DTLS 1.3 connection, sends "ping",
+    receives "pong", then terminates the connection.
+    Click below to begin exploring.</p>
+    </div>
+<div class="rec-outer">
+<div class="calculation client">
+<div class="rec-label">Client Key Exchange Generation</div>
+<img class="illustration" src="images/key1.png" width="135" height="250"/>
+<div class="rec-explanation">
+    <p>The connection begins with the client generating a private/public keypair
+    for key exchange.  Key exchange is a technique
+    where two parties can agree on the same number without
+    an eavesdropper being able to tell what the number is.
+    <p>
+    An explanation of the key exchange can be found on my
+    <a href="https://x25519.xargs.org/">X25519 site</a>,
+    but doesn't need to be understood in depth for the rest
+    of this page.
+    <p>
+    The private key is chosen by selecting an integer between
+    0 and 2<sup>256</sup>-1.  The client does this by generating 32
+    bytes (256 bits) of random data.  The
+    <a href="files/client-ephemeral-private.key" download="client-ephemeral-private.key">private key</a>
+    selected is:
+
+    <pre class="ind2"><tt class="longboi"
+    >202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f</tt></pre>
+
+    The <a href="files/client-ephemeral-public.key" download="client-ephemeral-public.key">public key</a>
+    is created from the private key as explained on the <a href="https://x25519.xargs.org/">X25519 site</a>.
+    The public key calculated is:
+
+    <pre class="ind2"><tt class="longboi"
+    >358072d6365880d1aeea329adf9121383851ed21a28e3b75e965d0d2cd166254</tt></pre>
+
+    The public key calculation can be confirmed at the command line:
+    <codesample>
+<pre><code>### requires openssl 1.1.0 or higher
+$ openssl pkey -noout -text &lt; client-ephemeral-private.key
+
+X25519 Private-Key:
+priv:
+    20:21:22:23:24:25:26:27:28:29:2a:2b:2c:2d:2e:
+    2f:30:31:32:33:34:35:36:37:38:39:3a:3b:3c:3d:
+    3e:3f
+pub:
+    35:80:72:d6:36:58:80:d1:ae:ea:32:9a:df:91:21:
+    38:38:51:ed:21:a2:8e:3b:75:e9:65:d0:d2:cd:16:
+    62:54
+</code></pre>
+    </codesample>
+    At this point nothing has been sent over the network. Continue the connection below.
+</div>
+</div>
+</div>
+
+<div class="rec-outer">
+<div class="record client">
+<div class="rec-label">Client Hello</div>
+<div class="rec-explanation">
+    The encrypted session begins with the client saying "Hello".
+    The client provides information including the following:
+    <ul>
+    <li>client random data (used later in the handshake)
+    <li>a list of cipher suites that the client supports
+    <li>a public key for key exchange
+    <li>protocol versions that the client can support
+    </ul>
+</div>
+<span class="record-data">
+    <span class="string">
+        <span class="label">DTLS Record Header</span>
+        <span class="bytes">
+ 16 fe fd 00 00 00 00 00 00 00 00 00 9d
+        </span>
+        <div class="explanation">
+            Each DTLS record starts with a type, some sequence info, and a length.
+            <ul>
+            <li><tt>16</tt> - TLS record type 22 (Handshake)
+            <li><tt>fe fd</tt> - Protocol version (DTLS 1.2, see below)
+            <li><tt>00 00</tt> - key epoch (incremented each time the encryption keys are updated)
+            <li><tt>00 00 00 00 00 00</tt> - DTLS record sequence number 0
+            <li><tt>00 9d</tt> - length of following data in this record (0x9D (157) bytes)
+            </ul>
+            <p>
+            DTLS versions are indicated in the protocol by breaking the protocol version
+            into parts and then putting each part into a byte with the ones-complement value
+            (thus "1.3" becomes {1,3} which becomes the bytes <tt>0xFE 0xFC</tt>).
+            This complement technique keeps DTLS versions distinct from TLS versions.
+            <p>
+            Because middleboxes have been created and deployed
+            that do not allow protocol versions that
+            they do not recognize, all DTLS 1.3 sessions
+            indicate version DTLS 1.2 (<tt>0xFE 0xFD</tt>) in unencrypted records.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">TLS Handshake Header</span>
+        <span class="bytes">
+ 01 00 00 91
+        </span>
+        <div class="explanation">
+            Each TLS handshake record starts with a type and a length.
+            <ul>
+            <li><tt>01</tt> - handshake record type 1 (ClientHello)
+            <li><tt>00 00 91</tt> - 0x91 (145) bytes of client hello data is in this handshake record.
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Reconstruction Data</span>
+        <span class="bytes">
+ 00 00 00 00 00 00 00 91
+        </span>
+        <div class="explanation">
+            Because the UDP protocol does not guarantee delivery or ordering, and
+            because UDP datagrams might be smaller than handshake records that need
+            to be sent, values must be provided to support record re-construction
+            in case of data loss, reordering, or to support fragmentation when needed.
+            <ul>
+            <li><tt>00 00</tt> - handshake message sequence number 0
+            <li><tt>00 00 00</tt> - fragment offset of 0 bytes
+            <li><tt>00 00 91</tt> - fragment length of 0x91 (145) bytes
+            </ul>
+            <p>
+            In this case the entire handshake record fits within a single UDP datagram,
+            indicated by offset of zero and length of the full handshake record length.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Client Version</span>
+        <span class="bytes">
+ fe fd
+        </span>
+        <div class="explanation">
+            DTLS versions are indicated in the protocol by breaking the protocol version
+            into parts and then putting each part into a byte with the ones-complement value
+            (thus "1.3" becomes {1,3} which becomes the bytes <tt>0xFE 0xFC</tt>).
+            This complement technique keeps DTLS versions distinct from TLS versions.
+            <p>
+            Because middleboxes have been created and deployed
+            that do not allow protocol versions that
+            they do not recognize, all DTLS 1.3 sessions
+            indicate version DTLS 1.2 (<tt>0xFE 0xFD</tt>) in this field.
+            Therefore this field is no longer used in version negotiation,
+            which uses the "Supported Versions" extension below instead.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Client Random</span>
+        <span class="bytes">
+ e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 ea eb ec ed ee ef f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 fa fb fc fd fe ff
+        </span>
+        <div class="explanation">
+            The client provides 32 bytes of random data.  This data will be used later in the session.
+            In this example we've made the random data a predictable string.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Legacy Session ID</span>
+        <span class="bytes">
+ 00
+        </span>
+        <div class="explanation">
+            This is a legacy field and is not used in DTLS 1.3.
+            <ul>
+            <li><tt>00</tt> - 0 bytes of session ID follow
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Legacy Cookie</span>
+        <span class="bytes">
+ 00
+        </span>
+        <div class="explanation">
+            This is a legacy field and is not used in DTLS 1.3.
+            <ul>
+            <li><tt>00</tt> - 0 bytes of round-trip confirmation follow
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Cipher Suites</span>
+        <span class="bytes">
+ 00 06 13 01 13 02 13 03
+        </span>
+        <div class="explanation">
+            The client provides an ordered list of which
+            cipher suites it will support for encryption.
+            The list is in the order preferred by the
+            client, with highest preference first.
+            <ul>
+            <li><tt>00 06</tt> - 6 bytes of cipher suite data
+            <li><tt>13 01</tt> - assigned value for <tt>TLS_AES_128_GCM_SHA256</tt>
+            <li><tt>13 02</tt> - assigned value for <tt>TLS_AES_256_GCM_SHA384</tt>
+            <li><tt>13 03</tt> - assigned value for <tt>TLS_CHACHA20_POLY1305_SHA256</tt>
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Compression Methods</span>
+        <span class="bytes">
+ 01 00
+        </span>
+        <div class="explanation">
+            Previous versions of TLS (and therefore DTLS) supported
+            compression, which was found to leak
+            information about the encrypted data allowing
+            it to be read (see <a href="https://en.wikipedia.org/wiki/CRIME">CRIME</a>).
+            <br/><br/>
+            DTLS 1.3 no longer allows compression, so
+            this field is always a single entry with
+            the "null" compression method which performs
+            no change to the data.
+            <ul>
+            <li><tt>01</tt> - 1 bytes of compression methods
+            <li><tt>00</tt> - assigned value for "null" compression
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extensions Length</span>
+        <span class="bytes">
+ 00 61
+        </span>
+        <div class="explanation">
+            The client has provided a list of optional
+            extensions which the server can use to
+            take action or enable new features.
+            <ul>
+            <li><tt>00 61</tt> - the extensions will take 0x61 (97) bytes of data
+            </ul>
+            Each extension will start with two bytes
+            that indicate which extension it is, followed
+            by a two-byte content length field, followed
+            by the contents of the extension.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extension - Key Share</span>
+        <span class="bytes">
+ 00 33 00 26 00 24 00 1d 00 20 35 80 72 d6 36 58 80 d1 ae ea 32 9a df 91 21 38 38 51 ed 21 a2 8e
+ 3b 75 e9 65 d0 d2 cd 16 62 54
+        </span>
+        <div class="explanation">
+            The client sends one or more ephemeral public keys
+            using algorithm(s) that it thinks the server
+            will support.  This allows the
+            rest of the handshake after the ClientHello
+            and ServerHello messages to be encrypted,
+            unlike previous protocol versions where the
+            handshake was sent in the clear.
+            <ul>
+                <li><tt>00 33</tt> - assigned value for extension "Key Share"
+                <li><tt>00 26</tt> - 0x26 (38) bytes of "Key Share" extension data follows
+                <li><tt>00 24</tt> - 0x24 (36) bytes of key share data follows
+                <li><tt>00 1d</tt> - assigned value for x25519 (key exchange via curve25519)
+                <li><tt>00 20</tt> - 0x20 (32) bytes of public key follows
+                <li><tt>35 80 ... 62 54</tt></l> - public key from the step "Client Key Exchange Generation"
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extension - Supported Versions</span>
+        <span class="bytes">
+ 00 2b 00 03 02 fe fc
+        </span>
+        <div class="explanation">
+            The client indicates its support of DTLS 1.3. For compatibility reasons
+            this is put into an extension instead of the Client Version field above.
+            <ul>
+                <li><tt>00 2b</tt> - assigned value for extension "Supported Versions"
+                <li><tt>00 03</tt> - 3 bytes of "Supported Versions" extension data follows
+                <li><tt>02</tt> - 2 bytes of DTLS version follows
+                <li><tt>fe fc</tt> - assigned value for DTLS 1.3
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extension - Signature Algorithms</span>
+        <span class="bytes">
+ 00 0d 00 20 00 1e 06 03 05 03 04 03 02 03 08 06 08 0b 08 05 08 0a 08 04 08 09 06 01 05 01 04 01
+ 03 01 02 01
+        </span>
+        <div class="explanation">
+            This extension indicates which signature
+            algorithms the client supports.  This can
+            influence the certificate that the server
+            presents to the client, as well as the
+            signature that is sent by the server in
+            the CertificateVerify record.
+            <p>
+            This list is presented in descending order
+            of the client's preference.
+            <ul>
+                <li><tt>00 0d</tt> - assigned value for extension "Signature Algorithms"
+                <li><tt>00 20</tt> - 0x20 (32) bytes of "Signature Algorithms" extension data follows
+                <li><tt>00 1e</tt> - 0x1E (30) bytes of data are in the following list of algorithms
+                <li><tt>06 03</tt> - assigned value for ECDSA-SECP512r1-SHA512
+                <li><tt>05 03</tt> - assigned value for ECDSA-SECP384r1-SHA384
+                <li><tt>04 03</tt> - assigned value for ECDSA-SECP256r1-SHA256
+                <li><tt>02 03</tt> - assigned value for ECDSA-SHA1
+                <li><tt>08 06</tt> - assigned value for RSA-PSS-RSAE-SHA512
+                <li><tt>08 0b</tt> - assigned value for RSA-PSS-PSS-SHA512
+                <li><tt>08 05</tt> - assigned value for RSA-PSS-RSAE-SHA384
+                <li><tt>08 0a</tt> - assigned value for RSA-PSS-PSS-SHA384
+                <li><tt>08 04</tt> - assigned value for RSA-PSS-RSAE-SHA256
+                <li><tt>08 09</tt> - assigned value for RSA-PSS-PSS-SHA256
+                <li><tt>06 01</tt> - assigned value for RSA-PKCS1-SHA512
+                <li><tt>05 01</tt> - assigned value for RSA-PKCS1-SHA384
+                <li><tt>04 01</tt> - assigned value for RSA-PKCS1-SHA256
+                <li><tt>03 01</tt> - assigned value for SHA224-RSA
+                <li><tt>02 01</tt> - assigned value for RSA-PKCS1-SHA1
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extension - Encrypt-then-MAC</span>
+        <span class="bytes">
+ 00 16 00 00
+        </span>
+        <div class="explanation">
+            The client indicates it can support EtM, which prevents
+            <a href="https://iacr.org/archive/crypto2001/21390309.pdf">certain vulnerabilities</a>
+            in earlier versions of TLS and DTLS. In DTLS 1.3 this mechanism is always used,
+            so this extension will have no effect in this session.
+            <ul>
+                <li><tt>00 16</tt> - assigned value for extension "Encrypt-then-MAC"
+                <li><tt>00 00</tt> - 0 bytes of extension data follows
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extension - Supported Groups</span>
+        <span class="bytes">
+ 00 0a 00 04 00 02 00 1d
+        </span>
+        <div class="explanation">
+            The client has indicated that it supports
+            elliptic curve (EC) cryptography for one curve type.
+            To make this extension more generic for
+            other cryptography types it calls these
+            "supported groups" instead of "supported curves".
+            <br/><br/>
+            This list is presented in descending order
+            of the client's preference.
+            <ul>
+                <li><tt>00 0a</tt> - assigned value for extension "supported groups"
+                <li><tt>00 04</tt> - 4 bytes of "supported group" extension data follows
+                <li><tt>00 02</tt> - 2 bytes of data are in the curves list
+                <li><tt>00 1d</tt> - assigned value for the curve "x25519"
+            </ul>
+        </div>
+    </span>
+</span>
+</div>
+</div>
+    <div class="outerblock">
+    <p>The code for this project, including packet captures, can be found
+    <a href="https://github.com/syncsynchalt/illustrated-dtls">on GitHub</a>.</p>
+    </div>
+
+    <div class="outerblock">
+    <p>You may also be interested in a breakdown of
+    <a href="https://tls13.xargs.org/">TLS 1.3</a>.</p>
+    </div>
+
+    <div class="outerblock">
+    <p>If you found this page useful or interesting let me know via Twitter
+    <a href="https://twitter.com/xargsnotbombs">@XargsNotBombs</a>.</p>
+    </div>
+
+</div>
+
+<div id="templates" style="display: none">
+    <div id="closeBtnTmpl">
+        <span class="close" onclick="ill.unselectAllStrings()">×</span>
+    </div>
+    <div id="showCodeTmpl">
+        <button class="show-code" onclick="ill.showCode(this, event)">Show Code</button>
+    </div>
+    <button id="annotateTmpl" class="annotate-toggle"
+        onclick="ill.toggleAnnotate(this.parentElement, event)">Annotations</button>
+</div>
+
+<a class="print-mode" href="#print" onclick="ill.printMode()">
+    [print]
+</a>
+</body>
+</html>

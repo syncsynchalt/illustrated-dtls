@@ -9,4 +9,8 @@ captures/caps/sn_removal
 captures/caps/aes_128_gcm_decrypt*
 captures/caps/*-unprot
 captures/caps/*-dec
+generate/hkdf/
+generate/ill-generator
+generate/ill12/
+generate/ill13/
 /.idea

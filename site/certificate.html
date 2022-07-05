@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>The Illustrated Certificate</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="title" content="The Illustrated Certificate"/>
+    <meta name="description" content="Every byte of a certificate explained"/>
+    <link rel="stylesheet" href="frombootstrap.css">
+    <link rel="stylesheet" href="illustrated.css">
+    <script src="illustrated.js"></script>
+</head>
+
+<body class="certificate">
+<div class="container">
+<div class="rec-outer">
+<div class="record server selected">
+<div class="rec-label">Server Certificate Detail</div>
+<img class="illustration" src="images/key9.png" width="97" height="250"/>
+<div class="rec-explanation">
+    The certificate is in ASN.1 DER binary encoding.  This encoding consists of records in the following sequence:
+    type tag, length, data.
+    <br/><br/>
+    The type tag contains the following information:
+    <ul>
+    <li>type class (2 bits): universal, application, context-specific, or private
+    <li>constructed (1 bit): set if the record consists of smaller records
+    <li>type (5 bits): if type class is universal then type indicates integer, ASCII string, Object ID, etc.
+    </ul>
+</div>
