@@ -46,7 +46,7 @@
     };
 
     ill.showCode = (element, event) => {
-        element.parentNode.classList.add("show");
+        element.classList.add("show");
         ill.cancel(event);
     };
 
@@ -71,9 +71,11 @@
     };
 
     ill.addToggleAnnotations = (record) => {
-        let expl = record.querySelector(".rec-explanation"),
-            copy = document.getElementById("annotateTmpl").cloneNode(true);
-        expl.insertAdjacentElement("afterend", copy);
+        let expl = record.querySelector(".rec-explanation");
+        let copy = document.getElementById("annotateTmpl").cloneNode(true);
+        // always true (IDE warning)
+        if (copy instanceof Element) expl.insertAdjacentElement("afterend", copy);
+        copy.addEventListener('click', () => { ill.toggleAnnotate(record) });
     };
 
     ill.injectLabels = () => {
@@ -108,7 +110,7 @@
         els = document.querySelectorAll(".bytes.unprotected");
         [].forEach.call(els, (el) => { el.classList.toggle("hp-disabled"); });
         let btns = document.querySelectorAll("button.hp-toggle");
-        if (btns[0].textContent == "Disable header protection") {
+        if (btns[0].textContent === "Disable header protection") {
             [].forEach.call(btns, (el) => { el.textContent = "Enable header protection"; });
         } else {
             [].forEach.call(btns, (el) => { el.textContent = "Disable header protection"; });
@@ -126,11 +128,6 @@
             el.classList.add("selected");
             el.classList.add("annotate");
         });
-/*
-        [].forEach.call(document.querySelectorAll("processblock"), (el) => {
-            el.classList.add("notrunc");
-        });
-*/
         [].forEach.call(document.querySelectorAll("codesample"), (el) => {
             el.classList.add("show");
         });
@@ -155,14 +152,6 @@
                 ill.toggleRecord(el.parentNode, event);
             };
         });
-        /*
-        [].forEach.call(document.querySelectorAll("processblock"), (el) => {
-            el.onclick = (event) => {
-                el.classList.add("clicked");
-                ill.cancel(event);
-            };
-        });
-        */
         [].forEach.call(document.querySelectorAll("button.hp-toggle"), (el) => {
             el.onclick = (event) => {
                 ill.toggleHeaderProtection();
@@ -174,6 +163,7 @@
         });
         [].forEach.call(document.querySelectorAll("codesample"), (el) => {
             ill.addShowCode(el);
+            el.addEventListener("click", (event) => { ill.showCode(el, event) });
         });
         [].forEach.call(document.querySelectorAll(".bytes.protected"), (el) => {
             el.setAttribute("title", "modified by header protection");
@@ -184,7 +174,7 @@
 
     window.onkeyup = (e) => {
         let els;
-        if (e.keyCode === 27) {
+        if (e.key === "Escape" || e.key === "Esc") {
             els = document.querySelectorAll(".record.annotate");
             if (els.length) {
                 [].forEach.call(els, (rec) => { rec.classList.remove("annotate"); });

@@ -1,1 +1,3 @@
 --ignore-dir=.deps
+--ignore-dir=ill12
+--ignore-dir=ill13

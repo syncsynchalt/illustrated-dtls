@@ -92,6 +92,10 @@ tt.longboi {
     background-color: #D8EDCF;
 }
 
+xtt {
+    font-family: monospace;
+}
+
 /***** .record and .calculation *****/
 
 .rec-outer {
@@ -252,11 +256,7 @@ tt.longboi {
     content: "";
     position: absolute;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px;
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    transform: rotate 45deg;
+    transform: rotate(45deg);
     bottom: -3px;
     left: 10px;
     border-width: 3px;
@@ -283,11 +283,7 @@ tt.longboi {
     content: " ";
     position: absolute;
     padding: 5px;
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    transform: rotate 45deg;
+    transform: rotate(45deg);
     top: -7px;
     left: 20px;
     border: 2px solid;
@@ -320,11 +316,11 @@ tt.longboi {
 }
 
 .string.encrypted .bytes {
-    text-shadow: 1px 1px 0px red;
+    text-shadow: 1px 1px 0 red;
 }
 
 .string.decrypted .bytes {
-    text-shadow: 1px 1px 0px green;
+    text-shadow: 1px 1px 0 green;
 }
 
 .string .bytes.protected {
@@ -359,12 +355,9 @@ processblock {
     position: relative;
     margin: 1em;
     padding-left: 1em;
-    font-size: 0.9em;
-    /* max-height: 150px; */
     overflow: hidden;
     transition: all 0.3s;
-    cursor-style: pointer;
-
+    cursor: pointer;
     font-size: 0.8em;
 }
 
@@ -377,33 +370,10 @@ processblock:before {
     top: 0;
     pointer-events: none;
 }
-/*
-.server processblock:before {
-    background: linear-gradient(rgba(255,255,255,0) 100px, #D0E8F5);
-}
-.client processblock:before {
-    background: linear-gradient(rgba(255,255,255,0) 125px, #D8EDCF);
-}
-.explanation processblock:before {
-    background: linear-gradient(rgba(255,255,255,0) 125px, #FAF7DC);
-}
-*/
 
 processblock pre {
     margin: 0;
 }
-
-/*
-processblock.clicked,
-processblock.notrunc {
-    max-height: 99999px;
-    cursor-style: auto;
-}
-processblock.clicked:before,
-processblock.notrunc:before {
-    background: none;
-}
-*/
 
 /***** codesample *****/
 
@@ -420,24 +390,22 @@ codesample pre {
 codesample button.show-code {
     display: block;
     clear: both;
-    box-shadow: inset 0px 1px 3px 0px #91b8b3;
-    background: linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
-    background-color: #768d87;
+    box-shadow: inset 0 1px 3px 0 #91b8b3;
+    background: #768d87 linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
     border-radius:5px;
     border: 1px solid #566963;
     cursor: pointer;
     color: #ffffff;
-    font-family: Arial;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
     font-weight: bold;
     padding: 11px 23px;
     text-decoration: none;
-    text-shadow: 0px -1px 0px #2b665e;
+    text-shadow: 0 -1px 0 #2b665e;
 }
 
 codesample button.show-code:hover:hover {
-    background: linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
-    background-color: #6c7c7c;
+    background: #6c7c7c linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
 }
 codesample button.show-code:active {
     position: relative;
@@ -460,7 +428,7 @@ button.annotate-toggle {
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    font: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 1em;
     padding: .4em 1.7em .45em;
     text-shadow: 0 1px 1px rgba(0,0,0,.4);
@@ -493,7 +461,7 @@ button.hp-toggle {
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    font: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 1em;
     padding: .4em 1.7em .45em;
     text-shadow: 0 1px 1px rgba(0,0,0,.4);

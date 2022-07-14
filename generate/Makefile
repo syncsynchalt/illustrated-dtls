@@ -23,7 +23,7 @@ site: ill-generator hkdf ill12 ill13
 	mkdir -p ../site/files/
 	cp -a ill13/archive/tools/aes_128_gcm_decrypt.c ../site/files/
 	cp -a ../server/server.key ../server/server.crt ../site/files/
-	cp -a hkdf/hkdf ../site/files/hkdf.sh
+	cp -a hkdf/hkdf-dtls ../site/files/hkdf-dtls.sh
 	cp -a ill12/site/files/curve25519-mult.c ../site/files/
 
 clean:

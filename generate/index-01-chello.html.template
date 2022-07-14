@@ -1,6 +1,7 @@
 <div class="rec-outer">
 <div class="calculation client">
 <div class="rec-label">Client Key Exchange Generation</div>
+<!--suppress CheckImageSize -->
 <img class="illustration" src="images/key1.png" width="135" height="250"/>
 <div class="rec-explanation">
     <p>The connection begins with the client generating a private/public keypair
@@ -19,15 +20,15 @@
     <a href="files/client-ephemeral-private.key" download="client-ephemeral-private.key">private key</a>
     selected is:
 
-    <pre class="ind2"><tt class="longboi"
-    >202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f</tt></pre>
+    <pre class="ind2"><xtt class="longboi"
+    >202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f</xtt></pre>
 
     The <a href="files/client-ephemeral-public.key" download="client-ephemeral-public.key">public key</a>
     is created from the private key as explained on the <a href="https://x25519.xargs.org/">X25519 site</a>.
     The public key calculated is:
 
-    <pre class="ind2"><tt class="longboi"
-    >358072d6365880d1aeea329adf9121383851ed21a28e3b75e965d0d2cd166254</tt></pre>
+    <pre class="ind2"><xtt class="longboi"
+    >358072d6365880d1aeea329adf9121383851ed21a28e3b75e965d0d2cd166254</xtt></pre>
 
     The public key calculation can be confirmed at the command line:
     <codesample>
@@ -74,22 +75,22 @@ pub:
         <div class="explanation">
             Each DTLS record starts with a type, some sequence info, and a length.
             <ul>
-            <li><tt>%0</tt> - TLS record type %d0 (Handshake)
-            <li><tt>%1 %2</tt> - Protocol version (DTLS 1.2, see below)
-            <li><tt>%3 %4</tt> - key epoch (incremented each time the encryption keys are updated)
-            <li><tt>%5 %6 %7 %8 %9 %10</tt> - DTLS record sequence number %nnnnnn5
-            <li><tt>%11 %12</tt> - length of following data in this record (%nn11 bytes)
+            <li><xtt>%0</xtt> - TLS record type %d0 (Handshake)
+            <li><xtt>%1 %2</xtt> - Protocol version (DTLS 1.2, see below)
+            <li><xtt>%3 %4</xtt> - key epoch (incremented each time the encryption keys are updated)
+            <li><xtt>%5 %6 %7 %8 %9 %10</xtt> - DTLS record sequence number %nnnnnn5
+            <li><xtt>%11 %12</xtt> - length of following data in this record (%nn11 bytes)
             </ul>
             <p>
-            DTLS versions are indicated in the protocol by breaking the protocol version
+            DTLS versions are encoded by breaking the protocol version
             into parts and then putting each part into a byte with the ones-complement value
-            (thus "1.3" becomes {1,3} which becomes the bytes <tt>0xFE 0xFC</tt>).
+            (thus "1.3" becomes {1,3} which becomes the bytes <xtt>0xFE 0xFC</xtt>).
             This complement technique keeps DTLS versions distinct from TLS versions.
             <p>
             Because middleboxes have been created and deployed
             that do not allow protocol versions that
             they do not recognize, all DTLS 1.3 sessions
-            indicate version DTLS 1.2 (<tt>0xFE 0xFD</tt>) in unencrypted records.
+            indicate version DTLS 1.2 (<xtt>0xFE 0xFD</xtt>) in unencrypted records.
         </div>
     </span>
 
@@ -102,8 +103,8 @@ pub:
         <div class="explanation">
             Each TLS handshake record starts with a type and a length.
             <ul>
-            <li><tt>%0</tt> - handshake record type %d0 (ClientHello)
-            <li><tt>%1 %2 %3</tt> - %nnn1 bytes of client hello data is in this handshake record.
+            <li><xtt>%0</xtt> - handshake record type %d0 (ClientHello)
+            <li><xtt>%1 %2 %3</xtt> - %nnn1 bytes of client hello data is in this handshake record.
             </ul>
         </div>
     </span>
@@ -115,14 +116,14 @@ pub:
 %bytes
         </span>
         <div class="explanation">
-            Because the UDP protocol does not guarantee delivery or ordering, and
+            Because UDP does not guarantee delivery or ordering, and
             because UDP datagrams might be smaller than handshake records that need
             to be sent, values must be provided to support record re-construction
-            in case of data loss, reordering, or to support fragmentation when needed.
+            in case of data loss, reordering, or fragmentation.
             <ul>
-            <li><tt>%0 %1</tt> - handshake message sequence number %nn0
-            <li><tt>%2 %3 %4</tt> - fragment offset of %nnn2 bytes
-            <li><tt>%5 %6 %7</tt> - fragment length of %nnn5 bytes
+            <li><xtt>%0 %1</xtt> - handshake message sequence number %nn0
+            <li><xtt>%2 %3 %4</xtt> - fragment offset of %nnn2 bytes
+            <li><xtt>%5 %6 %7</xtt> - fragment length of %nnn5 bytes
             </ul>
             <p>
             In this case the entire handshake record fits within a single UDP datagram,
@@ -131,21 +132,21 @@ pub:
     </span>
 
     <span class="string">
-        <span class="label">Client Version</span>
+        <span class="label">Client Version (Legacy)</span>
         <span class="bytes">
 %next 2
 %bytes
         </span>
         <div class="explanation">
-            DTLS versions are indicated in the protocol by breaking the protocol version
+            DTLS versions are encoded by breaking the protocol version
             into parts and then putting each part into a byte with the ones-complement value
-            (thus "1.3" becomes {1,3} which becomes the bytes <tt>0xFE 0xFC</tt>).
+            (thus "1.3" becomes {1,3} which becomes the bytes <xtt>0xFE 0xFC</xtt>).
             This complement technique keeps DTLS versions distinct from TLS versions.
             <p>
             Because middleboxes have been created and deployed
             that do not allow protocol versions that
             they do not recognize, all DTLS 1.3 sessions
-            indicate version DTLS 1.2 (<tt>0xFE 0xFD</tt>) in this field.
+            indicate version DTLS 1.2 (<xtt>0xFE 0xFD</xtt>) in this field.
             Therefore this field is no longer used in version negotiation,
             which uses the "Supported Versions" extension below instead.
         </div>
@@ -172,7 +173,7 @@ pub:
         <div class="explanation">
             This is a legacy field and is not used in DTLS 1.3.
             <ul>
-            <li><tt>%0</tt> - %n0 bytes of session ID follow
+            <li><xtt>%0</xtt> - %n0 bytes of session ID follow
             </ul>
         </div>
     </span>
@@ -186,7 +187,7 @@ pub:
         <div class="explanation">
             This is a legacy field and is not used in DTLS 1.3.
             <ul>
-            <li><tt>%0</tt> - %n0 bytes of round-trip confirmation follow
+            <li><xtt>%0</xtt> - %n0 bytes of round-trip confirmation follow
             </ul>
         </div>
     </span>
@@ -203,10 +204,10 @@ pub:
             The list is in the order preferred by the
             client, with highest preference first.
             <ul>
-            <li><tt>%0 %1</tt> - %nn0 bytes of cipher suite data
-            <li><tt>%2 %3</tt> - assigned value for <tt>TLS_AES_128_GCM_SHA256</tt>
-            <li><tt>%4 %5</tt> - assigned value for <tt>TLS_AES_256_GCM_SHA384</tt>
-            <li><tt>%6 %7</tt> - assigned value for <tt>TLS_CHACHA20_POLY1305_SHA256</tt>
+            <li><xtt>%0 %1</xtt> - %nn0 bytes of cipher suite data
+            <li><xtt>%2 %3</xtt> - assigned value for <xtt>TLS_AES_128_GCM_SHA256</xtt>
+            <li><xtt>%4 %5</xtt> - assigned value for <xtt>TLS_AES_256_GCM_SHA384</xtt>
+            <li><xtt>%6 %7</xtt> - assigned value for <xtt>TLS_CHACHA20_POLY1305_SHA256</xtt>
             </ul>
         </div>
     </span>
@@ -228,8 +229,8 @@ pub:
             the "null" compression method which performs
             no change to the data.
             <ul>
-            <li><tt>%0</tt> - %n0 byte of compression methods
-            <li><tt>%1</tt> - assigned value for "null" compression
+            <li><xtt>%0</xtt> - %n0 byte of compression methods
+            <li><xtt>%1</xtt> - assigned value for "null" compression
             </ul>
         </div>
     </span>
@@ -245,7 +246,7 @@ pub:
             extensions which the server can use to
             take action or enable new features.
             <ul>
-            <li><tt>%0 %1</tt> - the extensions will take %nn0 bytes of data
+            <li><xtt>%0 %1</xtt> - the extensions will take %nn0 bytes of data
             </ul>
             Each extension will start with two bytes
             that indicate which extension it is, followed
@@ -269,12 +270,12 @@ pub:
             unlike previous protocol versions where the
             handshake was sent in the clear.
             <ul>
-                <li><tt>00 33</tt> - assigned value for extension "Key Share"
-                <li><tt>%2 %3</tt> - %nn2 bytes of "Key Share" extension data follows
-                <li><tt>%4 %5</tt> - %nn4 bytes of key share data follows
-                <li><tt>00 1d</tt> - assigned value for x25519 (key exchange via curve25519)
-                <li><tt>%8 %9</tt> - %nn8 bytes of public key follows
-                <li><tt>%10 %11 ... %-2 %-1</tt></l> - public key from the step "Client Key Exchange Generation"
+                <li><xtt>00 33</xtt> - assigned value for extension "Key Share"
+                <li><xtt>%2 %3</xtt> - %nn2 bytes of "Key Share" extension data follows
+                <li><xtt>%4 %5</xtt> - %nn4 bytes of key share data follows
+                <li><xtt>00 1d</xtt> - assigned value for x25519 (key exchange via curve25519)
+                <li><xtt>%8 %9</xtt> - %nn8 bytes of public key follows
+                <li><xtt>%10 %11 ... %-2 %-1</xtt> - public key from the step "Client Key Exchange Generation"
             </ul>
         </div>
     </span>
@@ -289,10 +290,10 @@ pub:
             The client indicates its support of DTLS 1.3. For compatibility reasons
             this is put into an extension instead of the Client Version field above.
             <ul>
-                <li><tt>00 2b</tt> - assigned value for extension "Supported Versions"
-                <li><tt>%2 %3</tt> - %nn2 bytes of "Supported Versions" extension data follows
-                <li><tt>%4</tt> - %n4 bytes of DTLS version follows
-                <li><tt>%5 %6</tt> - assigned value for DTLS 1.3
+                <li><xtt>00 2b</xtt> - assigned value for extension "Supported Versions"
+                <li><xtt>%2 %3</xtt> - %nn2 bytes of "Supported Versions" extension data follows
+                <li><xtt>%4</xtt> - %n4 bytes of DTLS version follows
+                <li><xtt>%5 %6</xtt> - assigned value for DTLS 1.3
             </ul>
         </div>
     </span>
@@ -314,24 +315,24 @@ pub:
             This list is presented in descending order
             of the client's preference.
             <ul>
-                <li><tt>00 0d</tt> - assigned value for extension "Signature Algorithms"
-                <li><tt>%2 %3</tt> - %nn2 bytes of "Signature Algorithms" extension data follows
-                <li><tt>%4 %5</tt> - %nn4 bytes of data are in the following list of algorithms
-                <li><tt>%6 %7</tt> - assigned value for ECDSA-SECP512r1-SHA512
-                <li><tt>%8 %9</tt> - assigned value for ECDSA-SECP384r1-SHA384
-                <li><tt>%10 %11</tt> - assigned value for ECDSA-SECP256r1-SHA256
-                <li><tt>%12 %13</tt> - assigned value for ECDSA-SHA1
-                <li><tt>%14 %15</tt> - assigned value for RSA-PSS-RSAE-SHA512
-                <li><tt>%16 %17</tt> - assigned value for RSA-PSS-PSS-SHA512
-                <li><tt>%18 %19</tt> - assigned value for RSA-PSS-RSAE-SHA384
-                <li><tt>%20 %21</tt> - assigned value for RSA-PSS-PSS-SHA384
-                <li><tt>%22 %23</tt> - assigned value for RSA-PSS-RSAE-SHA256
-                <li><tt>%24 %25</tt> - assigned value for RSA-PSS-PSS-SHA256
-                <li><tt>%26 %27</tt> - assigned value for RSA-PKCS1-SHA512
-                <li><tt>%28 %29</tt> - assigned value for RSA-PKCS1-SHA384
-                <li><tt>%30 %31</tt> - assigned value for RSA-PKCS1-SHA256
-                <li><tt>%32 %33</tt> - assigned value for SHA224-RSA
-                <li><tt>%34 %35</tt> - assigned value for RSA-PKCS1-SHA1
+                <li><xtt>00 0d</xtt> - assigned value for extension "Signature Algorithms"
+                <li><xtt>%2 %3</xtt> - %nn2 bytes of "Signature Algorithms" extension data follows
+                <li><xtt>%4 %5</xtt> - %nn4 bytes of data are in the following list of algorithms
+                <li><xtt>%6 %7</xtt> - assigned value for ECDSA-SECP512r1-SHA512
+                <li><xtt>%8 %9</xtt> - assigned value for ECDSA-SECP384r1-SHA384
+                <li><xtt>%10 %11</xtt> - assigned value for ECDSA-SECP256r1-SHA256
+                <li><xtt>%12 %13</xtt> - assigned value for ECDSA-SHA1
+                <li><xtt>%14 %15</xtt> - assigned value for RSA-PSS-RSAE-SHA512
+                <li><xtt>%16 %17</xtt> - assigned value for RSA-PSS-PSS-SHA512
+                <li><xtt>%18 %19</xtt> - assigned value for RSA-PSS-RSAE-SHA384
+                <li><xtt>%20 %21</xtt> - assigned value for RSA-PSS-PSS-SHA384
+                <li><xtt>%22 %23</xtt> - assigned value for RSA-PSS-RSAE-SHA256
+                <li><xtt>%24 %25</xtt> - assigned value for RSA-PSS-PSS-SHA256
+                <li><xtt>%26 %27</xtt> - assigned value for RSA-PKCS1-SHA512
+                <li><xtt>%28 %29</xtt> - assigned value for RSA-PKCS1-SHA384
+                <li><xtt>%30 %31</xtt> - assigned value for RSA-PKCS1-SHA256
+                <li><xtt>%32 %33</xtt> - assigned value for SHA224-RSA
+                <li><xtt>%34 %35</xtt> - assigned value for RSA-PKCS1-SHA1
             </ul>
         </div>
     </span>
@@ -348,8 +349,8 @@ pub:
             in earlier versions of TLS and DTLS. In DTLS 1.3 this mechanism is always used,
             so this extension will have no effect in this session.
             <ul>
-                <li><tt>%0 %1</tt> - assigned value for extension "Encrypt-then-MAC"
-                <li><tt>%2 %3</tt> - %nn2 bytes of extension data follows
+                <li><xtt>%0 %1</xtt> - assigned value for extension "Encrypt-then-MAC"
+                <li><xtt>%2 %3</xtt> - %nn2 bytes of extension data follows
             </ul>
         </div>
     </span>
@@ -370,10 +371,10 @@ pub:
             This list is presented in descending order
             of the client's preference.
             <ul>
-                <li><tt>%0 %1</tt> - assigned value for extension "supported groups"
-                <li><tt>%2 %3</tt> - %nn2 bytes of "supported group" extension data follows
-                <li><tt>%4 %5</tt> - %nn4 bytes of data are in the curves list
-                <li><tt>%6 %7</tt> - assigned value for the curve "x25519"
+                <li><xtt>%0 %1</xtt> - assigned value for extension "supported groups"
+                <li><xtt>%2 %3</xtt> - %nn2 bytes of "supported group" extension data follows
+                <li><xtt>%4 %5</xtt> - %nn4 bytes of data are in the curves list
+                <li><xtt>%6 %7</xtt> - assigned value for the curve "x25519"
             </ul>
         </div>
     </span>

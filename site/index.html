@@ -1,5 +1,6 @@
 <!doctype html>
-<html>
+<!--suppress HtmlRequiredAltAttribute -->
+<html lang=en>
 
 <head>
     <title>The Illustrated DTLS Connection: Every Byte Explained</title>
@@ -47,6 +48,8 @@
     <a href="https://tls13.xargs.org">TLS 1.3</a>
     <a href="https://tls12.xargs.org">TLS 1.2</a>
 </div>
+<h3>xxx NOTE: this is a work in progress, please don't share this URL until this banner is gone.</h3>
+
 <h1>The Illustrated DTLS Connection</h1>
 <div class="container">
 
@@ -65,6 +68,7 @@
 <div class="rec-outer">
 <div class="calculation client">
 <div class="rec-label">Client Key Exchange Generation</div>
+<!--suppress CheckImageSize -->
 <img class="illustration" src="images/key1.png" width="135" height="250"/>
 <div class="rec-explanation">
     <p>The connection begins with the client generating a private/public keypair
@@ -83,15 +87,15 @@
     <a href="files/client-ephemeral-private.key" download="client-ephemeral-private.key">private key</a>
     selected is:
 
-    <pre class="ind2"><tt class="longboi"
-    >202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f</tt></pre>
+    <pre class="ind2"><xtt class="longboi"
+    >202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f</xtt></pre>
 
     The <a href="files/client-ephemeral-public.key" download="client-ephemeral-public.key">public key</a>
     is created from the private key as explained on the <a href="https://x25519.xargs.org/">X25519 site</a>.
     The public key calculated is:
 
-    <pre class="ind2"><tt class="longboi"
-    >358072d6365880d1aeea329adf9121383851ed21a28e3b75e965d0d2cd166254</tt></pre>
+    <pre class="ind2"><xtt class="longboi"
+    >358072d6365880d1aeea329adf9121383851ed21a28e3b75e965d0d2cd166254</xtt></pre>
 
     The public key calculation can be confirmed at the command line:
     <codesample>
@@ -136,22 +140,22 @@ pub:
         <div class="explanation">
             Each DTLS record starts with a type, some sequence info, and a length.
             <ul>
-            <li><tt>16</tt> - TLS record type 22 (Handshake)
-            <li><tt>fe fd</tt> - Protocol version (DTLS 1.2, see below)
-            <li><tt>00 00</tt> - key epoch (incremented each time the encryption keys are updated)
-            <li><tt>00 00 00 00 00 00</tt> - DTLS record sequence number 0
-            <li><tt>00 9d</tt> - length of following data in this record (0x9D (157) bytes)
+            <li><xtt>16</xtt> - TLS record type 22 (Handshake)
+            <li><xtt>fe fd</xtt> - Protocol version (DTLS 1.2, see below)
+            <li><xtt>00 00</xtt> - key epoch (incremented each time the encryption keys are updated)
+            <li><xtt>00 00 00 00 00 00</xtt> - DTLS record sequence number 0
+            <li><xtt>00 9d</xtt> - length of following data in this record (0x9D (157) bytes)
             </ul>
             <p>
-            DTLS versions are indicated in the protocol by breaking the protocol version
+            DTLS versions are encoded by breaking the protocol version
             into parts and then putting each part into a byte with the ones-complement value
-            (thus "1.3" becomes {1,3} which becomes the bytes <tt>0xFE 0xFC</tt>).
+            (thus "1.3" becomes {1,3} which becomes the bytes <xtt>0xFE 0xFC</xtt>).
             This complement technique keeps DTLS versions distinct from TLS versions.
             <p>
             Because middleboxes have been created and deployed
             that do not allow protocol versions that
             they do not recognize, all DTLS 1.3 sessions
-            indicate version DTLS 1.2 (<tt>0xFE 0xFD</tt>) in unencrypted records.
+            indicate version DTLS 1.2 (<xtt>0xFE 0xFD</xtt>) in unencrypted records.
         </div>
     </span>
 
@@ -163,8 +167,8 @@ pub:
         <div class="explanation">
             Each TLS handshake record starts with a type and a length.
             <ul>
-            <li><tt>01</tt> - handshake record type 1 (ClientHello)
-            <li><tt>00 00 91</tt> - 0x91 (145) bytes of client hello data is in this handshake record.
+            <li><xtt>01</xtt> - handshake record type 1 (ClientHello)
+            <li><xtt>00 00 91</xtt> - 0x91 (145) bytes of client hello data is in this handshake record.
             </ul>
         </div>
     </span>
@@ -175,14 +179,14 @@ pub:
  00 00 00 00 00 00 00 91
         </span>
         <div class="explanation">
-            Because the UDP protocol does not guarantee delivery or ordering, and
+            Because UDP does not guarantee delivery or ordering, and
             because UDP datagrams might be smaller than handshake records that need
             to be sent, values must be provided to support record re-construction
-            in case of data loss, reordering, or to support fragmentation when needed.
+            in case of data loss, reordering, or fragmentation.
             <ul>
-            <li><tt>00 00</tt> - handshake message sequence number 0
-            <li><tt>00 00 00</tt> - fragment offset of 0 bytes
-            <li><tt>00 00 91</tt> - fragment length of 0x91 (145) bytes
+            <li><xtt>00 00</xtt> - handshake message sequence number 0
+            <li><xtt>00 00 00</xtt> - fragment offset of 0 bytes
+            <li><xtt>00 00 91</xtt> - fragment length of 0x91 (145) bytes
             </ul>
             <p>
             In this case the entire handshake record fits within a single UDP datagram,
@@ -191,20 +195,20 @@ pub:
     </span>
 
     <span class="string">
-        <span class="label">Client Version</span>
+        <span class="label">Client Version (Legacy)</span>
         <span class="bytes">
  fe fd
         </span>
         <div class="explanation">
-            DTLS versions are indicated in the protocol by breaking the protocol version
+            DTLS versions are encoded by breaking the protocol version
             into parts and then putting each part into a byte with the ones-complement value
-            (thus "1.3" becomes {1,3} which becomes the bytes <tt>0xFE 0xFC</tt>).
+            (thus "1.3" becomes {1,3} which becomes the bytes <xtt>0xFE 0xFC</xtt>).
             This complement technique keeps DTLS versions distinct from TLS versions.
             <p>
             Because middleboxes have been created and deployed
             that do not allow protocol versions that
             they do not recognize, all DTLS 1.3 sessions
-            indicate version DTLS 1.2 (<tt>0xFE 0xFD</tt>) in this field.
+            indicate version DTLS 1.2 (<xtt>0xFE 0xFD</xtt>) in this field.
             Therefore this field is no longer used in version negotiation,
             which uses the "Supported Versions" extension below instead.
         </div>
@@ -229,7 +233,7 @@ pub:
         <div class="explanation">
             This is a legacy field and is not used in DTLS 1.3.
             <ul>
-            <li><tt>00</tt> - 0 bytes of session ID follow
+            <li><xtt>00</xtt> - 0 bytes of session ID follow
             </ul>
         </div>
     </span>
@@ -242,7 +246,7 @@ pub:
         <div class="explanation">
             This is a legacy field and is not used in DTLS 1.3.
             <ul>
-            <li><tt>00</tt> - 0 bytes of round-trip confirmation follow
+            <li><xtt>00</xtt> - 0 bytes of round-trip confirmation follow
             </ul>
         </div>
     </span>
@@ -258,10 +262,10 @@ pub:
             The list is in the order preferred by the
             client, with highest preference first.
             <ul>
-            <li><tt>00 06</tt> - 6 bytes of cipher suite data
-            <li><tt>13 01</tt> - assigned value for <tt>TLS_AES_128_GCM_SHA256</tt>
-            <li><tt>13 02</tt> - assigned value for <tt>TLS_AES_256_GCM_SHA384</tt>
-            <li><tt>13 03</tt> - assigned value for <tt>TLS_CHACHA20_POLY1305_SHA256</tt>
+            <li><xtt>00 06</xtt> - 6 bytes of cipher suite data
+            <li><xtt>13 01</xtt> - assigned value for <xtt>TLS_AES_128_GCM_SHA256</xtt>
+            <li><xtt>13 02</xtt> - assigned value for <xtt>TLS_AES_256_GCM_SHA384</xtt>
+            <li><xtt>13 03</xtt> - assigned value for <xtt>TLS_CHACHA20_POLY1305_SHA256</xtt>
             </ul>
         </div>
     </span>
@@ -282,8 +286,8 @@ pub:
             the "null" compression method which performs
             no change to the data.
             <ul>
-            <li><tt>01</tt> - 1 bytes of compression methods
-            <li><tt>00</tt> - assigned value for "null" compression
+            <li><xtt>01</xtt> - 1 byte of compression methods
+            <li><xtt>00</xtt> - assigned value for "null" compression
             </ul>
         </div>
     </span>
@@ -298,7 +302,7 @@ pub:
             extensions which the server can use to
             take action or enable new features.
             <ul>
-            <li><tt>00 61</tt> - the extensions will take 0x61 (97) bytes of data
+            <li><xtt>00 61</xtt> - the extensions will take 0x61 (97) bytes of data
             </ul>
             Each extension will start with two bytes
             that indicate which extension it is, followed
@@ -322,12 +326,12 @@ pub:
             unlike previous protocol versions where the
             handshake was sent in the clear.
             <ul>
-                <li><tt>00 33</tt> - assigned value for extension "Key Share"
-                <li><tt>00 26</tt> - 0x26 (38) bytes of "Key Share" extension data follows
-                <li><tt>00 24</tt> - 0x24 (36) bytes of key share data follows
-                <li><tt>00 1d</tt> - assigned value for x25519 (key exchange via curve25519)
-                <li><tt>00 20</tt> - 0x20 (32) bytes of public key follows
-                <li><tt>35 80 ... 62 54</tt></l> - public key from the step "Client Key Exchange Generation"
+                <li><xtt>00 33</xtt> - assigned value for extension "Key Share"
+                <li><xtt>00 26</xtt> - 0x26 (38) bytes of "Key Share" extension data follows
+                <li><xtt>00 24</xtt> - 0x24 (36) bytes of key share data follows
+                <li><xtt>00 1d</xtt> - assigned value for x25519 (key exchange via curve25519)
+                <li><xtt>00 20</xtt> - 0x20 (32) bytes of public key follows
+                <li><xtt>35 80 ... 62 54</xtt> - public key from the step "Client Key Exchange Generation"
             </ul>
         </div>
     </span>
@@ -341,10 +345,10 @@ pub:
             The client indicates its support of DTLS 1.3. For compatibility reasons
             this is put into an extension instead of the Client Version field above.
             <ul>
-                <li><tt>00 2b</tt> - assigned value for extension "Supported Versions"
-                <li><tt>00 03</tt> - 3 bytes of "Supported Versions" extension data follows
-                <li><tt>02</tt> - 2 bytes of DTLS version follows
-                <li><tt>fe fc</tt> - assigned value for DTLS 1.3
+                <li><xtt>00 2b</xtt> - assigned value for extension "Supported Versions"
+                <li><xtt>00 03</xtt> - 3 bytes of "Supported Versions" extension data follows
+                <li><xtt>02</xtt> - 2 bytes of DTLS version follows
+                <li><xtt>fe fc</xtt> - assigned value for DTLS 1.3
             </ul>
         </div>
     </span>
@@ -366,24 +370,24 @@ pub:
             This list is presented in descending order
             of the client's preference.
             <ul>
-                <li><tt>00 0d</tt> - assigned value for extension "Signature Algorithms"
-                <li><tt>00 20</tt> - 0x20 (32) bytes of "Signature Algorithms" extension data follows
-                <li><tt>00 1e</tt> - 0x1E (30) bytes of data are in the following list of algorithms
-                <li><tt>06 03</tt> - assigned value for ECDSA-SECP512r1-SHA512
-                <li><tt>05 03</tt> - assigned value for ECDSA-SECP384r1-SHA384
-                <li><tt>04 03</tt> - assigned value for ECDSA-SECP256r1-SHA256
-                <li><tt>02 03</tt> - assigned value for ECDSA-SHA1
-                <li><tt>08 06</tt> - assigned value for RSA-PSS-RSAE-SHA512
-                <li><tt>08 0b</tt> - assigned value for RSA-PSS-PSS-SHA512
-                <li><tt>08 05</tt> - assigned value for RSA-PSS-RSAE-SHA384
-                <li><tt>08 0a</tt> - assigned value for RSA-PSS-PSS-SHA384
-                <li><tt>08 04</tt> - assigned value for RSA-PSS-RSAE-SHA256
-                <li><tt>08 09</tt> - assigned value for RSA-PSS-PSS-SHA256
-                <li><tt>06 01</tt> - assigned value for RSA-PKCS1-SHA512
-                <li><tt>05 01</tt> - assigned value for RSA-PKCS1-SHA384
-                <li><tt>04 01</tt> - assigned value for RSA-PKCS1-SHA256
-                <li><tt>03 01</tt> - assigned value for SHA224-RSA
-                <li><tt>02 01</tt> - assigned value for RSA-PKCS1-SHA1
+                <li><xtt>00 0d</xtt> - assigned value for extension "Signature Algorithms"
+                <li><xtt>00 20</xtt> - 0x20 (32) bytes of "Signature Algorithms" extension data follows
+                <li><xtt>00 1e</xtt> - 0x1E (30) bytes of data are in the following list of algorithms
+                <li><xtt>06 03</xtt> - assigned value for ECDSA-SECP512r1-SHA512
+                <li><xtt>05 03</xtt> - assigned value for ECDSA-SECP384r1-SHA384
+                <li><xtt>04 03</xtt> - assigned value for ECDSA-SECP256r1-SHA256
+                <li><xtt>02 03</xtt> - assigned value for ECDSA-SHA1
+                <li><xtt>08 06</xtt> - assigned value for RSA-PSS-RSAE-SHA512
+                <li><xtt>08 0b</xtt> - assigned value for RSA-PSS-PSS-SHA512
+                <li><xtt>08 05</xtt> - assigned value for RSA-PSS-RSAE-SHA384
+                <li><xtt>08 0a</xtt> - assigned value for RSA-PSS-PSS-SHA384
+                <li><xtt>08 04</xtt> - assigned value for RSA-PSS-RSAE-SHA256
+                <li><xtt>08 09</xtt> - assigned value for RSA-PSS-PSS-SHA256
+                <li><xtt>06 01</xtt> - assigned value for RSA-PKCS1-SHA512
+                <li><xtt>05 01</xtt> - assigned value for RSA-PKCS1-SHA384
+                <li><xtt>04 01</xtt> - assigned value for RSA-PKCS1-SHA256
+                <li><xtt>03 01</xtt> - assigned value for SHA224-RSA
+                <li><xtt>02 01</xtt> - assigned value for RSA-PKCS1-SHA1
             </ul>
         </div>
     </span>
@@ -399,8 +403,8 @@ pub:
             in earlier versions of TLS and DTLS. In DTLS 1.3 this mechanism is always used,
             so this extension will have no effect in this session.
             <ul>
-                <li><tt>00 16</tt> - assigned value for extension "Encrypt-then-MAC"
-                <li><tt>00 00</tt> - 0 bytes of extension data follows
+                <li><xtt>00 16</xtt> - assigned value for extension "Encrypt-then-MAC"
+                <li><xtt>00 00</xtt> - 0 bytes of extension data follows
             </ul>
         </div>
     </span>
@@ -420,14 +424,419 @@ pub:
             This list is presented in descending order
             of the client's preference.
             <ul>
-                <li><tt>00 0a</tt> - assigned value for extension "supported groups"
-                <li><tt>00 04</tt> - 4 bytes of "supported group" extension data follows
-                <li><tt>00 02</tt> - 2 bytes of data are in the curves list
-                <li><tt>00 1d</tt> - assigned value for the curve "x25519"
+                <li><xtt>00 0a</xtt> - assigned value for extension "supported groups"
+                <li><xtt>00 04</xtt> - 4 bytes of "supported group" extension data follows
+                <li><xtt>00 02</xtt> - 2 bytes of data are in the curves list
+                <li><xtt>00 1d</xtt> - assigned value for the curve "x25519"
             </ul>
         </div>
     </span>
 </span>
+</div>
+</div>
+<div class="rec-outer">
+<div class="calculation server">
+<div class="rec-label">Server Key Exchange Generation</div>
+<!--suppress CheckImageSize -->
+<img class="illustration" src="images/key3.png" width="130" height="250"/>
+<div class="rec-explanation">
+    <p>The server creates its own private/public keypair
+    for key exchange.  Key exchange is a technique
+    where two parties can agree on the same number without
+    an eavesdropper being able to tell what the number is.
+    <p>
+    An explanation of the key exchange can be found on my
+    <a href="https://x25519.xargs.org/">X25519 site</a>,
+    but doesn't need to be understood in depth for the rest
+    of this page.
+    <br/><br/>
+    The private key is chosen by selecting an integer between
+    0 and 2<sup>256</sup>-1.  The server does this by generating 32
+    bytes (256 bits) of random data.  The
+    <a href="files/server-ephemeral-private.key" download="server-ephemeral-private.key">private key</a>
+    selected is:
+
+    <pre class="ind2"><xtt class="longboi"
+    >909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeaf</xtt></pre>
+
+    The <a href="files/server-ephemeral-public.key" download="server-ephemeral-public.key">public key</a>
+    is created from the private key as explained on the <a href="https://x25519.xargs.org/">X25519 site</a>.
+    The public key calculated is:
+
+    <pre class="ind2"><xtt class="longboi"
+    >9fd7ad6dcff4298dd3f96d5b1b2af910a0535b1488d7f8fabb349a982880b615</xtt></pre>
+
+    The public key calculation can be confirmed with command line tools:
+    <codesample>
+<pre><code>### requires openssl 1.1.0 or higher
+$ openssl pkey -noout -text &lt; server-ephemeral-private.key
+
+X25519 Private-Key:
+priv:
+    90:91:92:93:94:95:96:97:98:99:9a:9b:9c:9d:9e:
+    9f:a0:a1:a2:a3:a4:a5:a6:a7:a8:a9:aa:ab:ac:ad:
+    ae:af
+pub:
+    9f:d7:ad:6d:cf:f4:29:8d:d3:f9:6d:5b:1b:2a:f9:
+    10:a0:53:5b:14:88:d7:f8:fa:bb:34:9a:98:28:80:
+    b6:15
+</code></pre>
+    </codesample>
+</div>
+</div>
+</div>
+
+<div class="rec-outer">
+<div class="record server">
+<div class="rec-label">Server Hello</div>
+<div class="rec-explanation">
+    The server says "Hello" back.  The server provides information including the following:
+    <ul>
+    <li>server random data (used later in the handshake)
+    <li>a selected cipher suite
+    <li>a public key for key exchange
+    <li>the negotiated protocol version
+    </ul>
+</div>
+<span class="record-data">
+    <span class="string">
+        <span class="label">DTLS Record Header</span>
+        <span class="bytes">
+ 16 fe fd 00 00 00 00 00 00 00 00 00 62
+        </span>
+        <div class="explanation">
+            Each DTLS record starts with a type, some sequence info, and a length.
+            <ul>
+            <li><xtt>16</xtt> - TLS record type 22 (Handshake)
+            <li><xtt>fe fd</xtt> - Protocol version (DTLS 1.2, see below)
+            <li><xtt>00 00</xtt> - key epoch (incremented each time the encryption keys are updated)
+            <li><xtt>00 00 00 00 00 00</xtt> - DTLS record sequence number 0
+            <li><xtt>00 62</xtt> - length of following data in this record (0x62 (98) bytes)
+            </ul>
+            <p>
+            DTLS versions are encoded by breaking the protocol version
+            into parts and then putting each part into a byte with the ones-complement value
+            (thus "1.3" becomes {1,3} which becomes the bytes <xtt>0xFE 0xFC</xtt>).
+            This complement technique keeps DTLS versions distinct from TLS versions.
+            <p>
+            Because middleboxes have been created and deployed
+            that do not allow protocol versions that
+            they do not recognize, all DTLS 1.3 sessions
+            indicate version DTLS 1.2 (<xtt>0xFE 0xFD</xtt>) in unencrypted records.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">TLS Handshake Header</span>
+        <span class="bytes">
+ 02 00 00 56
+        </span>
+        <div class="explanation">
+            Each TLS handshake record starts with a type and a length.
+            <ul>
+            <li><xtt>02</xtt> - handshake record type 2 (ServerHello)
+            <li><xtt>00 00 56</xtt> - 0x56 (86) bytes of client hello data is in this handshake record.
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Reconstruction Data</span>
+        <span class="bytes">
+ 00 00 00 00 00 00 00 56
+        </span>
+        <div class="explanation">
+            Because UDP does not guarantee delivery or ordering, and
+            because UDP datagrams might be smaller than handshake records that need
+            to be sent, values must be provided to support record re-construction
+            in case of data loss, reordering, or fragmentation.
+            <ul>
+            <li><xtt>00 00</xtt> - handshake message sequence number 0
+            <li><xtt>00 00 00</xtt> - fragment offset of 0 bytes
+            <li><xtt>00 00 56</xtt> - fragment length of 0x56 (86) bytes
+            </ul>
+            <p>
+            In this case the entire handshake record fits within a single UDP datagram,
+            indicated by offset of zero and length of the full handshake record length.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Server Version (Legacy)</span>
+        <span class="bytes">
+ fe fd
+        </span>
+        <div class="explanation">
+            DTLS versions are encoded by breaking the protocol version
+            into parts and then putting each part into a byte with the ones-complement value
+            (thus "1.3" becomes {1,3} which becomes the bytes <xtt>0xFE 0xFC</xtt>).
+            This complement technique keeps DTLS versions distinct from TLS versions.
+            <p>
+            Because middleboxes have been created and deployed
+            that do not allow protocol versions that
+            they do not recognize, all DTLS 1.3 sessions
+            indicate version DTLS 1.2 (<xtt>0xFE 0xFD</xtt>) in this field.
+            Therefore this field is no longer used in version negotiation,
+            which uses the "Supported Versions" extension below instead.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Server Random</span>
+        <span class="bytes">
+ 70 71 72 73 74 75 76 77 78 79 7a 7b 7c 7d 7e 7f 80 81 82 83 84 85 86 87 88 89 8a 8b 8c 8d 8e 8f
+        </span>
+        <div class="explanation">
+            The server provides 32 bytes of random data.  This data will be used later in the session.
+            In this example we've made the random data a predictable string.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Legacy Session ID</span>
+        <span class="bytes">
+ 00
+        </span>
+        <div class="explanation">
+            This is a legacy field and is not used in DTLS 1.3.
+            <ul>
+            <li><xtt>00</xtt> - 0 bytes of session ID follow
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Cipher Suite</span>
+        <span class="bytes">
+ 13 01
+        </span>
+        <div class="explanation">
+            The server has selected cipher suite 0x1301
+            (TLS_AES_128_GCM_SHA256) from the list of options given by the client.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Compression Method</span>
+        <span class="bytes">
+ 00
+        </span>
+        <div class="explanation">
+            The server has selected compression method
+            0x00 ("Null", which performs no compression)
+            from the list of options given by the client.
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extensions Length</span>
+        <span class="bytes">
+ 00 2e
+        </span>
+        <div class="explanation">
+            The server has returned a list of extensions
+            to the client.  Because the server is
+            forbidden from replying with an extension
+            that the client did not send in its hello
+            message, the server knows that the client
+            will understand and support all extensions listed.
+            <ul>
+            <li><xtt>00 2e</xtt> - the extensions will take 0x2E (46) bytes of data
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extension - Key Share</span>
+        <span class="bytes">
+ 00 33 00 24 00 1d 00 20 9f d7 ad 6d cf f4 29 8d d3 f9 6d 5b 1b 2a f9 10 a0 53 5b 14 88 d7 f8 fa
+ bb 34 9a 98 28 80 b6 15
+        </span>
+        <div class="explanation">
+            The server sends a public key using the algorithm
+            of the public key sent by the client.  Once this is sent
+            encryption keys can be calculated and the rest of the
+            handshake will be encrypted,
+            unlike previous protocol versions where the
+            handshake was sent in the clear.
+            <ul>
+                <li><xtt>00 33</xtt> - assigned value for extension "Key Share"
+                <li><xtt>00 24</xtt> - 0x24 (36) bytes of "Key Share" extension data follows
+                <li><xtt>00 1d</xtt> - assigned value for x25519 (key exchange via curve25519)
+                <li><xtt>00 20</xtt> - 0x20 (32) bytes of public key follows
+                <li><xtt>9f d7 ... b6 15</xtt> - public key from the step "Server Key Exchange Generation"
+            </ul>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Extension - Supported Versions</span>
+        <span class="bytes">
+ 00 2b 00 02 fe fc
+        </span>
+        <div class="explanation">
+            The server indicates the negotiated DTLS version of 1.3.
+            <ul>
+                <li><xtt>00 2b</xtt> - assigned value for extension "Supported Versions"
+                <li><xtt>00 02</xtt> - 2 bytes of "Supported Versions" extension data follows
+                <li><xtt>fe fc</xtt> - assigned value for DTLS 1.3
+            </ul>
+        </div>
+    </span>
+</span>
+</div>
+</div>
+<div class="rec-outer">
+<div class="calculation server">
+<div class="rec-label">Server Handshake Keys Calc</div>
+<!--suppress CheckImageSize -->
+<img class="illustration" src="images/key5.png" width="124" height="250"/>
+<div class="rec-explanation">
+    The server now has the information needed to calculate the
+    keys used to encrypt the rest of the handshake.  It uses the following
+    information in this calculation:
+    <ul>
+    <li><a href="files/client-ephemeral-public.key">client public key</a> (from Client Hello)
+    <li><a href="files/server-ephemeral-private.key">server private key</a> (from Server Key Exchange Generation)
+    <li>SHA256 hash of ClientHello and ServerHello</li>
+    </ul>
+    <p>
+    First, the server finds the shared secret, which is the
+    result of the key exchange that allows the client and server
+    to agree on a number.  The server multiplies the client's
+    public key by the server's private key using the curve25519()
+    algorithm.  The 32-byte result is found to be:
+    <pre class="ind2"><tt class="longboi"
+    >df4a291baa1eb7cfa6934b29b474baad2697e29f1f920dcc77c8a0a088447624</tt></pre>
+    I've provided <a href="files/curve25519-mult.c" download="curve25519-mult.c">a tool</a>
+    to perform this calculation:
+    <codesample>
+<pre><code>$ cc -o curve25519-mult curve25519-mult.c
+$ ./curve25519-mult server-ephemeral-private.key \
+                    client-ephemeral-public.key | hexdump
+
+0000000 df 4a 29 1b aa 1e b7 cf a6 93 4b 29 b4 74 ba ad
+0000010 26 97 e2 9f 1f 92 0d cc 77 c8 a0 a0 88 44 76 24
+</code></pre>
+    </codesample>
+
+    It then calculates the SHA256 hash of all handshake messages
+    to this point (ClientHello and ServerHello). The hash does
+    not include DTLS-only bytes in the records, which are bytes 0-12 and 17-24. Ignoring these
+    bytes allows implementations to share code between TLS and DTLS implementations. This "hello_hash"
+    is <tt class="longboi"
+    >aee8eba0d2ee87052fbbc6864c1514c5a927d6f0ffb4f7954c7f379d95f1b1d7</tt>:
+    <codesample>
+<pre><code>$ (cat captures/caps/record-chello | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/';
+   cat captures/caps/record-shello | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/') \
+   | openssl sha256
+
+aee8eba0d2ee87052fbbc6864c1514c5a927d6f0ffb4f7954c7f379d95f1b1d7
+</code></pre>
+    </codesample>
+
+    We then feed the hash and the shared secret into a set of
+    key derivation operations, designed to protect against known and
+    possible attacks:
+
+    <processblock>
+<pre>early_secret = HKDF-Extract(salt=00, key=00...)
+empty_hash = SHA256("")
+derived_secret = HKDF-Expand-Label(key: early_secret, label: "derived", ctx: empty_hash, len: 32)
+handshake_secret = HKDF-Extract(salt: derived_secret, key: shared_secret)
+client_secret = HKDF-Expand-Label(key: handshake_secret, label: "c hs traffic", ctx: hello_hash, len: 32)
+server_secret = HKDF-Expand-Label(key: handshake_secret, label: "s hs traffic", ctx: hello_hash, len: 32)
+client_key = HKDF-Expand-Label(key: client_secret, label: "quic key", ctx: "", len: 16)
+server_key = HKDF-Expand-Label(key: server_secret, label: "quic key", ctx: "", len: 16)
+client_iv = HKDF-Expand-Label(key: client_secret, label: "quic iv", ctx: "", len: 12)
+server_iv = HKDF-Expand-Label(key: server_secret, label: "quic iv", ctx: "", len: 12)
+</pre>
+    </processblock>
+
+    I've created <a href="files/hkdf.sh" download="hkdf">an HKDF tool</a>
+    to perform these operations on the command line.
+    The key derivation process is reproduced below:
+    <codesample>
+<pre><code>$ hello_hash=aee8eba0d2ee87052fbbc6864c1514c5a927d6f0ffb4f7954c7f379d95f1b1d7
+$ shared_secret=df4a291baa1eb7cfa6934b29b474baad2697e29f1f920dcc77c8a0a088447624
+$ zero_key=0000000000000000000000000000000000000000000000000000000000000000
+$ early_secret=$(./hkdf-dtls extract 00 $zero_key)
+$ empty_hash=$(openssl sha256 < /dev/null | sed -e 's/.* //')
+$ derived_secret=$(./hkdf-dtls expandlabel $early_secret "derived" $empty_hash 32)
+$ handshake_secret=$(./hkdf-dtls extract $derived_secret $shared_secret)
+$ csecret=$(./hkdf-dtls expandlabel $handshake_secret "c hs traffic" $hello_hash 32)
+$ ssecret=$(./hkdf-dtls expandlabel $handshake_secret "s hs traffic" $hello_hash 32)
+$ client_handshake_key=$(./hkdf-dtls expandlabel $csecret "key" "" 16)
+$ server_handshake_key=$(./hkdf-dtls expandlabel $ssecret "key" "" 16)
+$ client_handshake_iv=$(./hkdf-dtls expandlabel $csecret "iv" "" 12)
+$ server_handshake_iv=$(./hkdf-dtls expandlabel $ssecret "iv" "" 12)
+$ echo client_key: $client_handshake_key
+$ echo client_iv: $client_handshake_iv
+$ echo server_key: $server_handshake_key
+$ echo server_iv: $server_handshake_iv
+
+client_key: 6caa2633d5e48f10051e69dc45549c97
+client_iv: 106dc6e393b7a9ea8ef29dd7
+server_key: 004e03e64ab6cba6b542775ec230e20a
+server_iv: 6d9924be044ee97c624913f2
+</code></pre>
+    </codesample>
+
+    From this we get the following encryption keys and IVs:
+    <ul>
+    <li>client handshake key: <tt class="longboi">6caa2633d5e48f10051e69dc45549c97</tt>
+    <li>client handshake IV: <tt class="longboi">106dc6e393b7a9ea8ef29dd7</tt>
+    <li>server handshake key: <tt class="longboi">004e03e64ab6cba6b542775ec230e20a</tt>
+    <li>server handshake IV: <tt class="longboi">6d9924be044ee97c624913f2</tt>
+    </ul>
+</div>
+</div>
+</div>
+
+<div class="rec-outer">
+<div class="calculation client">
+<div class="rec-label">Client Handshake Keys Calc</div>
+<img class="illustration" src="images/key6.png" width="105" height="250"/>
+<div class="rec-explanation">
+    The client now has the information to calculate the
+    keys that used to encrypt the rest of the handshake.  It uses the following
+    information in this calculation:
+    <ul>
+    <li><a href="files/server-ephemeral-public.key">server public key</a> (from Server Hello)
+    <li><a href="files/client-ephemeral-private.key">client private key</a> (from Client Key Exchange Generation)
+    <li>SHA256 hash of ClientHello and ServerHello</li>
+    </ul>
+    First, the client finds the shared secret, which is the
+    result of the key exchange that allows the client and server
+    to agree on a number.  The client multiplies the server's
+    public key by the client's private key using the curve25519()
+    algorithm. The properties of elliptic curve multiplication will
+    cause this to result in the same number found by the server in its
+    multiplication. The 32-byte result is found to be:
+    <pre class="ind2"><tt class="longboi"
+    >df4a291baa1eb7cfa6934b29b474baad2697e29f1f920dcc77c8a0a088447624</tt></pre>
+
+    I've provided <a href="files/curve25519-mult.c" download="curve25519-mult.c">a tool</a>
+    to perform this calculation:
+    <codesample>
+<pre><code>$ cc -o curve25519-mult curve25519-mult.c
+$ ./curve25519-mult client-ephemeral-private.key \
+                    server-ephemeral-public.key | hexdump
+
+0000000 df 4a 29 1b aa 1e b7 cf a6 93 4b 29 b4 74 ba ad
+0000010 26 97 e2 9f 1f 92 0d cc 77 c8 a0 a0 88 44 76 24
+</code></pre>
+    </codesample>
+    Since the shared secret above is the same number calculated by the
+    server in "Server Handshake Keys Calc", the rest of
+    the calculation is identical and the same values are found:
+    <ul>
+    <li>client handshake key: <tt class="longboi">6caa2633d5e48f10051e69dc45549c97</tt>
+    <li>client handshake IV: <tt class="longboi">106dc6e393b7a9ea8ef29dd7</tt>
+    <li>server handshake key: <tt class="longboi">004e03e64ab6cba6b542775ec230e20a</tt>
+    <li>server handshake IV: <tt class="longboi">6d9924be044ee97c624913f2</tt>
+    </ul>
+</div>
 </div>
 </div>
     <div class="outerblock">
@@ -448,16 +857,13 @@ pub:
 </div>
 
 <div id="templates" style="display: none">
-    <div id="closeBtnTmpl">
-        <span class="close" onclick="ill.unselectAllStrings()">×</span>
-    </div>
     <div id="showCodeTmpl">
-        <button class="show-code" onclick="ill.showCode(this, event)">Show Code</button>
+        <button class="show-code">Show Code</button>
     </div>
-    <button id="annotateTmpl" class="annotate-toggle"
-        onclick="ill.toggleAnnotate(this.parentElement, event)">Annotations</button>
+    <button id="annotateTmpl" class="annotate-toggle">Annotations</button>
 </div>
 
+<!--suppress HtmlUnknownAnchorTarget -->
 <a class="print-mode" href="#print" onclick="ill.printMode()">
     [print]
 </a>
