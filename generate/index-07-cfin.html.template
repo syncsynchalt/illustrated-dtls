@@ -247,7 +247,7 @@ $ echo $fin_hash | xxd -r -p \
             application data has a final byte
             which indicates its actual record type.
             <ul>
-            <li><tt>%0</tt> - type is 0x16 (handshake record)
+            <li><tt>%0</tt> - type is 22 (handshake record)
             </ul>
         </div>
     </span>

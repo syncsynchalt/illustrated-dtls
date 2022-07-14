@@ -193,7 +193,7 @@ $ cat /tmp/msg1 \
             application data has a final byte
             which indicates its actual record type.
             <ul>
-            <li><tt>%0</tt> - type is 0x%x0 (ACK record)
+            <li><tt>%0</tt> - type is %d0 (ACK record)
             </ul>
         </div>
     </span>
