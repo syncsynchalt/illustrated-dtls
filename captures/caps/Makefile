@@ -2,7 +2,7 @@ all: targets
 
 TARGETS=record-chello record-shello record-encext record-cert record-cverify \
 	record-sfin record-cfin record-sack record-cdata record-sdata record-sbye
-targets: aes_128_gcm_decrypt sn_removal $(TARGETS)
+targets: aes_128_gcm_decrypt $(TARGETS)
 
 OSSL_DIR=/usr/local/Cellar/openssl@3/3.0.3
 
@@ -10,9 +10,6 @@ aes_128_gcm_decrypt.c:
 	curl -sO https://quic.xargs.org/files/aes_128_gcm_decrypt.c
 
 aes_128_gcm_decrypt: aes_128_gcm_decrypt.c
-	cc -Wall -I $(OSSL_DIR)/include -o $@ $^ -L $(OSSL_DIR)/lib -lssl -lcrypto
-
-sn_removal: sn_removal.c
 	cc -Wall -I $(OSSL_DIR)/include -o $@ $^ -L $(OSSL_DIR)/lib -lssl -lcrypto
 
 S_HSN_KEY=7173fac51194e775001d625ef69d7c9f
@@ -32,16 +29,16 @@ C_AP_KEY=9ba90dbce8857bc1fcb81d41a0465cfe
 C_AP_IV=682219974631fa0656ee4eff
 
 %-unprot: %-prot
-	@if echo $^ | grep -q -- -chs-; then ./sn_removal $(C_HSN_KEY) < $^ > $@; fi
-	@if echo $^ | grep -q -- -shs-; then ./sn_removal $(S_HSN_KEY) < $^ > $@; fi
-	@if echo $^ | grep -q -- -cap-; then ./sn_removal $(C_ASN_KEY) < $^ > $@; fi
-	@if echo $^ | grep -q -- -sap-; then ./sn_removal $(S_ASN_KEY) < $^ > $@; fi
+	@if echo $^ | grep -q -- -chs-; then ./sn_removal.sh $(C_HSN_KEY) $^ > $@ || exit 1; fi
+	@if echo $^ | grep -q -- -shs-; then ./sn_removal.sh $(S_HSN_KEY) $^ > $@ || exit 1; fi
+	@if echo $^ | grep -q -- -cap-; then ./sn_removal.sh $(C_ASN_KEY) $^ > $@ || exit 1; fi
+	@if echo $^ | grep -q -- -sap-; then ./sn_removal.sh $(S_ASN_KEY) $^ > $@ || exit 1; fi
 
 %-dec: %-unprot
-	@if echo $^ | grep -q -- -chs-; then ./decrypt.sh $(C_HS_KEY) $(C_HS_IV) 5 $^ $@; fi
-	@if echo $^ | grep -q -- -shs-; then ./decrypt.sh $(S_HS_KEY) $(S_HS_IV) 5 $^ $@; fi
-	@if echo $^ | grep -q -- -cap-; then ./decrypt.sh $(C_AP_KEY) $(C_AP_IV) 5 $^ $@; fi
-	@if echo $^ | grep -q -- -sap-; then ./decrypt.sh $(S_AP_KEY) $(S_AP_IV) 5 $^ $@; fi
+	@if echo $^ | grep -q -- -chs-; then ./decrypt.sh $(C_HS_KEY) $(C_HS_IV) 5 $^ $@ || exit 1; fi
+	@if echo $^ | grep -q -- -shs-; then ./decrypt.sh $(S_HS_KEY) $(S_HS_IV) 5 $^ $@ || exit 1; fi
+	@if echo $^ | grep -q -- -cap-; then ./decrypt.sh $(C_AP_KEY) $(C_AP_IV) 5 $^ $@ || exit 1; fi
+	@if echo $^ | grep -q -- -sap-; then ./decrypt.sh $(S_AP_KEY) $(S_AP_IV) 5 $^ $@ || exit 1; fi
 
 record-chello: 01-hello-c
 	cp $^ $@
@@ -78,7 +75,7 @@ record-sbye: 11-bye-sap-dec
 
 clean:
 	rm -f *-unprot *-dec
-	rm -f aes_128_gcm_decrypt aes_128_gcm_decrypt.c sn_removal
+	rm -f aes_128_gcm_decrypt aes_128_gcm_decrypt.c
 	rm -f record-*
 
 .PHONY: clean targets all
