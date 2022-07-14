@@ -918,7 +918,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
 79fa
 
-### these bytes are xor'd one-for-one into the bytes of the record number
+### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
             </codesample>
         </div>
@@ -1165,7 +1165,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
 ed2a
 
-### these bytes are xor'd one-for-one into the bytes of the record number
+### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
             </codesample>
         </div>
@@ -1499,7 +1499,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
 a43c
 
-### these bytes are xor'd one-for-one into the bytes of the record number
+### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
             </codesample>
         </div>
@@ -1800,7 +1800,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
 0bbb
 
-### these bytes are xor'd one-for-one into the bytes of the record number
+### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
             </codesample>
         </div>
@@ -2046,7 +2046,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
 c248
 
-### these bytes are xor'd one-for-one into the bytes of the record number
+### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
             </codesample>
         </div>
@@ -2408,7 +2408,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
 3150
 
-### these bytes are xor'd one-for-one into the bytes of the record number
+### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
             </codesample>
         </div>
@@ -2435,7 +2435,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
  ea 80 ab 8e 08 c9 38 95 41 8d 24 35 71 ea 6d e7 d8 63 ee
         </span>
         <div class="explanation">
-            This data is encrypted with the server handshake key.
+            This data is encrypted with the server application key.
         </div>
     </span>
     <span class="string">
@@ -2454,12 +2454,12 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
         <div class="label">Decryption</div>
         <div class="explanation">
             This data is encrypted using the server
-            handshake key and the server handshake IV that were
-            generated during the "Server Handshake Keys
+            application key and the server application IV that were
+            generated during the "Server Application Keys
             Calc" step.  The IV will be modified
             by XOR'ing it by the count of records that
             have already been encrypted with this key,
-            which in this case is 3.  The process also
+            which in this case is 0.  The process also
             takes as input the 5-byte record header, as authenticated
             data that must match for the decryption to
             succeed.
@@ -2529,6 +2529,516 @@ $ cat /tmp/msg1 \
             which indicates its actual record type.
             <ul>
             <li><tt>1a</tt> - type is 26 (ACK record)
+            </ul>
+        </div>
+    </span>
+</span>
+</div>
+</div>
+<div class="rec-outer">
+<div class="record client">
+<div class="rec-label">Client Application Data</div>
+<div class="rec-explanation">
+    The client sends the data "ping".
+</div>
+<span class="record-data">
+    <span class="string">
+        <span class="label">Unified Header Byte</span>
+        <span class="bytes">
+ 2f
+        </span>
+        <div class="explanation">
+            An encrypted DTLS packet starts with the "Unified Header". This
+            byte gives information on the structure and decryption epoch of
+            the header and packet.
+            <p>
+            The bits in the value 0x2F have the following meaning:
+            <table class="bits">
+            <thead><tr>
+              <th></th>
+              <th>Val</th>
+              <th>Meaning</th>
+            </tr></thead>
+            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            </table>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Number</span>
+        <span class="bytes protected">
+ 68 3f
+        </span>
+        <span class="bytes unprotected">
+00 00
+        </span>
+        <div class="explanation">
+            <button class="hp-toggle">Disable record number encryption</button><br>
+            The record number of the packet is encrypted, to prevent middleware
+            from interpreting or interfering with the sequencing of packets.
+            <br><br>
+            This encryption is applied by encrypting a sample of each packet's
+            payload with the "record number key", then XOR'ing certain bits
+            and bytes in each packet with the resulting data.
+            <br><br>
+            An example of how to compute record number encryption:
+            <codesample>
+<pre><code>### "client record number key" from application keys calc step above
+$ key=5cb5bd8bac29777c650c0dde22d16d47
+### sample is taken from 16 bytes of payload starting 5 bytes into the record
+$ sample=7d72278b6c649f1e7b56b3cad411faf7
+$ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
+
+683f
+
+### the above bytes are xor'd one-for-one into the bytes of the record number
+</code></pre>
+            </codesample>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Length</span>
+        <span class="bytes">
+ 00 15
+        </span>
+        <div class="explanation">
+            Each record is assumed to consume the remainder of the datagram unless this
+            optional length is given. This allows implementations to send several TLS records
+            in a single datagram (though this connection does not take advantage of this).
+            <ul>
+            <li><xtt>00 15</xtt> - Record length of 0x15 (21) bytes
+            </ul>
+        </div>
+    </span>
+
+    <span class="string encrypted">
+        <span class="label">Encrypted Data</span>
+        <span class="bytes">
+ 7d 72 27 8b 6c
+        </span>
+        <div class="explanation">
+            This data is encrypted with the client application key.
+        </div>
+    </span>
+    <span class="string">
+        <span class="label">Auth Tag</span>
+        <span class="bytes">
+ 64 9f 1e 7b 56 b3 ca d4 11 fa f7 bd 51 8b fb 15
+        </span>
+        <div class="explanation">
+            This is the AEAD authentication tag
+            that protects the integrity of the
+            encrypted data and the record header.
+        </div>
+    </span>
+
+    <div class="decryption">
+        <div class="label">Decryption</div>
+        <div class="explanation">
+            This data is encrypted using the client
+            application key and the client application IV that were
+            generated during the "Client Application Keys
+            Calc" step.  The IV will be modified
+            by XOR'ing it by the count of records that
+            have already been encrypted with this key,
+            which in this case is 0.  The process also
+            takes as input the 5-byte record header, as authenticated
+            data that must match for the decryption to
+            succeed.
+            <br/><br/>
+            Because the <tt>openssl</tt> command line
+            tool does not yet support AEAD ciphers,
+            I've written command line tools to both
+            <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
+            and <a href="files/aes_128_gcm_encrypt.c" download="aes_128_gcm_encrypt.c">encrypt</a>
+            this data.
+            <codesample>
+<pre><code>### from the "Client Application Keys Calc" step
+$ key=9ba90dbce8857bc1fcb81d41a0465cfe
+$ iv=682219974631fa0656ee4eff
+### from this record
+$ recdata=2f00000015
+$ authtag=649f1e7b56b3cad411faf7bd518bfb15
+$ recordnum=0
+### may need to add -I and -L flags for include and lib dirs
+$ cc -o aes_128_gcm_decrypt aes_128_gcm_decrypt.c -lssl -lcrypto
+$ cat /tmp/msg1 \
+  | ./aes_128_gcm_decrypt $iv $recordnum $key $recdata $authtag \
+  | hexdump -C
+
+00000000  70 69 6e 67 17                                    |ping.|
+</code></pre>
+            </codesample>
+        </div>
+    </div>
+
+    <span class="string decrypted">
+        <span class="label">Application Data</span>
+        <span class="bytes">
+ 70 69 6e 67
+        </span>
+        <div class="explanation">
+            The bytes "ping".
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Record Type</span>
+        <span class="bytes">
+ 17
+        </span>
+        <div class="explanation">
+            Each TLS 1.3 record disguised as TLS 1.2
+            application data has a final byte
+            which indicates its actual record type.
+            <ul>
+            <li><tt>17</tt> - type is 23 (application data)
+            </ul>
+        </div>
+    </span>
+</span>
+</div>
+</div>
+<div class="rec-outer">
+<div class="record server">
+<div class="rec-label">Server Application Data</div>
+<div class="rec-explanation">
+    The server replies with the data "pong".
+</div>
+<span class="record-data">
+    <span class="string">
+        <span class="label">Unified Header Byte</span>
+        <span class="bytes">
+ 2f
+        </span>
+        <div class="explanation">
+            An encrypted DTLS packet starts with the "Unified Header". This
+            byte gives information on the structure and decryption epoch of
+            the header and packet.
+            <p>
+            The bits in the value 0x2F have the following meaning:
+            <table class="bits">
+            <thead><tr>
+              <th></th>
+              <th>Val</th>
+              <th>Meaning</th>
+            </tr></thead>
+            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            </table>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Number</span>
+        <span class="bytes protected">
+ a2 58
+        </span>
+        <span class="bytes unprotected">
+00 01
+        </span>
+        <div class="explanation">
+            <button class="hp-toggle">Disable record number encryption</button><br>
+            The record number of the packet is encrypted, to prevent middleware
+            from interpreting or interfering with the sequencing of packets.
+            <br><br>
+            This encryption is applied by encrypting a sample of each packet's
+            payload with the "record number key", then XOR'ing certain bits
+            and bytes in each packet with the resulting data.
+            <br><br>
+            An example of how to compute record number encryption:
+            <codesample>
+<pre><code>### "server record number key" from application keys calc step above
+$ key=57ba02596c6a1352d7fe8416c7e17d5a
+### sample is taken from 16 bytes of payload starting 5 bytes into the record
+$ sample=f5bd33f27b72780e351fa00703fb9f65
+$ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
+
+a259
+
+### the above bytes are xor'd one-for-one into the bytes of the record number
+</code></pre>
+            </codesample>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Length</span>
+        <span class="bytes">
+ 00 15
+        </span>
+        <div class="explanation">
+            Each record is assumed to consume the remainder of the datagram unless this
+            optional length is given. This allows implementations to send several TLS records
+            in a single datagram (though this connection does not take advantage of this).
+            <ul>
+            <li><xtt>00 15</xtt> - Record length of 0x15 (21) bytes
+            </ul>
+        </div>
+    </span>
+
+    <span class="string encrypted">
+        <span class="label">Encrypted Data</span>
+        <span class="bytes">
+ f5 bd 33 f2 7b
+        </span>
+        <div class="explanation">
+            This data is encrypted with the server application key.
+        </div>
+    </span>
+    <span class="string">
+        <span class="label">Auth Tag</span>
+        <span class="bytes">
+ 72 78 0e 35 1f a0 07 03 fb 9f 65 8c 68 9f 95 ae
+        </span>
+        <div class="explanation">
+            This is the AEAD authentication tag
+            that protects the integrity of the
+            encrypted data and the record header.
+        </div>
+    </span>
+
+    <div class="decryption">
+        <div class="label">Decryption</div>
+        <div class="explanation">
+            This data is encrypted using the server
+            application key and the server application IV that were
+            generated during the "Server Application Keys
+            Calc" step.  The IV will be modified
+            by XOR'ing it by the count of records that
+            have already been encrypted with this key,
+            which in this case is 1.  The process also
+            takes as input the 5-byte record header, as authenticated
+            data that must match for the decryption to
+            succeed.
+            <br/><br/>
+            Because the <tt>openssl</tt> command line
+            tool does not yet support AEAD ciphers,
+            I've written command line tools to both
+            <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
+            and <a href="files/aes_128_gcm_encrypt.c" download="aes_128_gcm_encrypt.c">encrypt</a>
+            this data.
+            <codesample>
+<pre><code>### from the "Server Application Keys Calc" step
+$ key=2b65fffbbc8189474aa2003c43c32d4d
+$ iv=582f5a11bdaf973fe3ffeb4e
+### from this record
+$ recdata=2f00010015
+$ authtag=72780e351fa00703fb9f658c689f95ae
+$ recordnum=1
+### may need to add -I and -L flags for include and lib dirs
+$ cc -o aes_128_gcm_decrypt aes_128_gcm_decrypt.c -lssl -lcrypto
+$ cat /tmp/msg1 \
+  | ./aes_128_gcm_decrypt $iv $recordnum $key $recdata $authtag \
+  | hexdump -C
+
+00000000  70 6f 6e 67 17                                    |pong.|
+</code></pre>
+            </codesample>
+        </div>
+    </div>
+
+    <span class="string decrypted">
+        <span class="label">Application Data</span>
+        <span class="bytes">
+ 70 6f 6e 67
+        </span>
+        <div class="explanation">
+            The bytes "pong".
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Record Type</span>
+        <span class="bytes">
+ 17
+        </span>
+        <div class="explanation">
+            Each TLS 1.3 record disguised as TLS 1.2
+            application data has a final byte
+            which indicates its actual record type.
+            <ul>
+            <li><tt>17</tt> - type is 23 (application data)
+            </ul>
+        </div>
+    </span>
+</span>
+</div>
+</div>
+<div class="rec-outer">
+<div class="record server">
+<div class="rec-label">Server Alert</div>
+<div class="rec-explanation">
+    The server sends an "alert" to indicate an orderly shutdown.
+</div>
+<span class="record-data">
+    <span class="string">
+        <span class="label">Unified Header Byte</span>
+        <span class="bytes">
+ 2f
+        </span>
+        <div class="explanation">
+            An encrypted DTLS packet starts with the "Unified Header". This
+            byte gives information on the structure and decryption epoch of
+            the header and packet.
+            <p>
+            The bits in the value 0x2F have the following meaning:
+            <table class="bits">
+            <thead><tr>
+              <th></th>
+              <th>Val</th>
+              <th>Meaning</th>
+            </tr></thead>
+            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            </table>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Number</span>
+        <span class="bytes protected">
+ 69 0c
+        </span>
+        <span class="bytes unprotected">
+00 02
+        </span>
+        <div class="explanation">
+            <button class="hp-toggle">Disable record number encryption</button><br>
+            The record number of the packet is encrypted, to prevent middleware
+            from interpreting or interfering with the sequencing of packets.
+            <br><br>
+            This encryption is applied by encrypting a sample of each packet's
+            payload with the "record number key", then XOR'ing certain bits
+            and bytes in each packet with the resulting data.
+            <br><br>
+            An example of how to compute record number encryption:
+            <codesample>
+<pre><code>### "server record number key" from application keys calc step above
+$ key=57ba02596c6a1352d7fe8416c7e17d5a
+### sample is taken from 16 bytes of payload starting 5 bytes into the record
+$ sample=dd8cd07daa964fd1ab508825378fc96f
+$ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
+
+690e
+
+### the above bytes are xor'd one-for-one into the bytes of the record number
+</code></pre>
+            </codesample>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Length</span>
+        <span class="bytes">
+ 00 13
+        </span>
+        <div class="explanation">
+            Each record is assumed to consume the remainder of the datagram unless this
+            optional length is given. This allows implementations to send several TLS records
+            in a single datagram (though this connection does not take advantage of this).
+            <ul>
+            <li><xtt>00 13</xtt> - Record length of 0x13 (19) bytes
+            </ul>
+        </div>
+    </span>
+
+    <span class="string encrypted">
+        <span class="label">Encrypted Data</span>
+        <span class="bytes">
+ dd 8c d0
+        </span>
+        <div class="explanation">
+            This data is encrypted with the server application key.
+        </div>
+    </span>
+    <span class="string">
+        <span class="label">Auth Tag</span>
+        <span class="bytes">
+ 7d aa 96 4f d1 ab 50 88 25 37 8f c9 6f a8 b1 e8
+        </span>
+        <div class="explanation">
+            This is the AEAD authentication tag
+            that protects the integrity of the
+            encrypted data and the record header.
+        </div>
+    </span>
+
+    <div class="decryption">
+        <div class="label">Decryption</div>
+        <div class="explanation">
+            This data is encrypted using the server
+            application key and the server application IV that were
+            generated during the "Server Application Keys
+            Calc" step.  The IV will be modified
+            by XOR'ing it by the count of records that
+            have already been encrypted with this key,
+            which in this case is 1.  The process also
+            takes as input the 5-byte record header, as authenticated
+            data that must match for the decryption to
+            succeed.
+            <br/><br/>
+            Because the <tt>openssl</tt> command line
+            tool does not yet support AEAD ciphers,
+            I've written command line tools to both
+            <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
+            and <a href="files/aes_128_gcm_encrypt.c" download="aes_128_gcm_encrypt.c">encrypt</a>
+            this data.
+            <codesample>
+<pre><code>### from the "Server Application Keys Calc" step
+$ key=2b65fffbbc8189474aa2003c43c32d4d
+$ iv=582f5a11bdaf973fe3ffeb4e
+### from this record
+$ recdata=2f00020013
+$ authtag=7daa964fd1ab508825378fc96fa8b1e8
+$ recordnum=2
+### may need to add -I and -L flags for include and lib dirs
+$ cc -o aes_128_gcm_decrypt aes_128_gcm_decrypt.c -lssl -lcrypto
+$ cat /tmp/msg1 \
+  | ./aes_128_gcm_decrypt $iv $recordnum $key $recdata $authtag \
+  | hexdump -C
+
+00000000  01 00 15
+</code></pre>
+            </codesample>
+        </div>
+    </div>
+
+    <span class="string decrypted">
+        <span class="label">Alert</span>
+        <span class="bytes">
+ 01 00
+        </span>
+        <div class="explanation">
+            The server sends a "close notify" alert, indicating an orderly shutdown of the connection.
+            <ul>
+            <li><xtt>01</xtt> - alert level 1 (warning) - unused
+            <li><xtt>00</xtt> - alert number 0 (close_notify)
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Record Type</span>
+        <span class="bytes">
+ 15
+        </span>
+        <div class="explanation">
+            Each TLS 1.3 record disguised as TLS 1.2
+            application data has a final byte
+            which indicates its actual record type.
+            <ul>
+            <li><tt>15</tt> - type is 21 (alert)
             </ul>
         </div>
     </span>

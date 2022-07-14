@@ -1,14 +1,10 @@
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server ACK</div>
+<div class="rec-label">Server Application Data</div>
 <div class="rec-explanation">
-    <p>
-    Each peer must respond to or acknowledge data received from the other
-    peer or it will be assumed lost and sent again.
-    <p>
-    In this record the server acknowledges receipt of the Client Handshake Finished record.
+    The server replies with the data "pong".
 </div>
-%file ../captures/caps/08-ack-sap-prot
+%file ../captures/caps/10-data-sap-prot
 <span class="record-data">
     <span class="string">
         <span class="label">Unified Header Byte</span>
@@ -44,7 +40,7 @@
 %bytes
         </span>
         <span class="bytes unprotected">
-00 00
+00 01
         </span>
         <div class="explanation">
             <button class="hp-toggle">Disable record number encryption</button><br>
@@ -60,10 +56,10 @@
 <pre><code>### "server record number key" from application keys calc step above
 $ key=57ba02596c6a1352d7fe8416c7e17d5a
 ### sample is taken from 16 bytes of payload starting 5 bytes into the record
-$ sample=ea80ab8e08c93895418d243571ea6de7
+$ sample=f5bd33f27b72780e351fa00703fb9f65
 $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
-3150
+a259
 
 ### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
@@ -90,7 +86,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
     <span class="string encrypted">
         <span class="label">Encrypted Data</span>
         <span class="bytes">
-%next 19
+%next 5
 %bytes
         </span>
         <div class="explanation">
@@ -120,7 +116,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
             Calc" step.  The IV will be modified
             by XOR'ing it by the count of records that
             have already been encrypted with this key,
-            which in this case is 0.  The process also
+            which in this case is 1.  The process also
             takes as input the 5-byte record header, as authenticated
             data that must match for the decryption to
             succeed.
@@ -136,49 +132,30 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 $ key=2b65fffbbc8189474aa2003c43c32d4d
 $ iv=582f5a11bdaf973fe3ffeb4e
 ### from this record
-$ recdata=2f00000023
-$ authtag=84230bb6043cb384df94b6da285a3bc4
-$ recordnum=0
+$ recdata=2f00010015
+$ authtag=72780e351fa00703fb9f658c689f95ae
+$ recordnum=1
 ### may need to add -I and -L flags for include and lib dirs
 $ cc -o aes_128_gcm_decrypt aes_128_gcm_decrypt.c -lssl -lcrypto
 $ cat /tmp/msg1 \
   | ./aes_128_gcm_decrypt $iv $recordnum $key $recdata $authtag \
   | hexdump -C
 
-00000000  00 10 00 00 00 00 00 00  00 02 00 00 00 00 00 00  |................|
-00000010  00 00 1a                                          |...|
+00000000  70 6f 6e 67 17                                    |pong.|
 </code></pre>
             </codesample>
         </div>
     </div>
 
-%file ../captures/caps/record-sack
+%file ../captures/caps/record-sdata
     <span class="string decrypted">
-        <span class="label">ACK Length</span>
+        <span class="label">Application Data</span>
         <span class="bytes">
-%next 2
+%next 4
 %bytes
         </span>
         <div class="explanation">
-            Each ACK message starts with a payload length.
-            <ul>
-            <li><tt>%0 %1</tt> - %nn0 bytes of ACK data within
-            </ul>
-        </div>
-    </span>
-
-    <span class="string decrypted">
-        <span class="label">Record Acknowledgement</span>
-        <span class="bytes">
-%next 16
-%bytes
-        </span>
-        <div class="explanation">
-            The server acknowledges a record that it received.
-            <ul>
-            <li><xtt>%1 %2 %3 %4 %5 %6 %7</xtt> - record epoch 2 (handshake keys)
-            <li><xtt>%8 %9 %10 %11 %12 %13 %14 %15</xtt> - record number 0
-            </ul>
+            The bytes "pong".
         </div>
     </span>
 
@@ -193,7 +170,7 @@ $ cat /tmp/msg1 \
             application data has a final byte
             which indicates its actual record type.
             <ul>
-            <li><tt>%0</tt> - type is %d0 (ACK record)
+            <li><tt>%0</tt> - type is 23 (application data)
             </ul>
         </div>
     </span>

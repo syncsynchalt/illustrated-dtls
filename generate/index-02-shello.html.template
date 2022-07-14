@@ -108,7 +108,7 @@ pub:
     </span>
 
     <span class="string">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
 %next 8
 %bytes

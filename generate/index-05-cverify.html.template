@@ -65,7 +65,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
 
 a43c
 
-### these bytes are xor'd one-for-one into the bytes of the record number
+### the above bytes are xor'd one-for-one into the bytes of the record number
 </code></pre>
             </codesample>
         </div>
@@ -173,7 +173,7 @@ $ cat /tmp/msg1 \
     </span>
 
     <span class="string decrypted">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
 %next 8
 %bytes
