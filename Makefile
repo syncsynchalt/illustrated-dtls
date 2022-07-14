@@ -2,4 +2,4 @@ all:
 
 dist:
 	@if [[ -z "${DISTROOT}" ]]; then echo "Must set \$$DISTROOT variable"; exit 1; fi
-	rsync -avh site/ ${DISTROOT}/dtls/
+	rsync -rlpvhc site/ ${DISTROOT}/dtls/
