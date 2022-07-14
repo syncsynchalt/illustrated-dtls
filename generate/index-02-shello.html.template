@@ -53,7 +53,7 @@ pub:
 %file ../captures/caps/record-shello
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Hello</div>
+<div class="rec-label">Server Hello Datagram</div>
 <div class="rec-explanation">
     The server says "Hello" back.  The server provides information including the following:
     <ul>

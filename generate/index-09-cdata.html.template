@@ -1,6 +1,6 @@
 <div class="rec-outer">
 <div class="record client">
-<div class="rec-label">Client Application Data</div>
+<div class="rec-label">Client Application Data Datagram</div>
 <div class="rec-explanation">
     The client sends the data "ping".
 </div>
@@ -25,9 +25,9 @@
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>

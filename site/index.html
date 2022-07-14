@@ -119,7 +119,7 @@ pub:
 
 <div class="rec-outer">
 <div class="record client">
-<div class="rec-label">Client Hello</div>
+<div class="rec-label">Client Hello Datagram</div>
 <div class="rec-explanation">
     The encrypted session begins with the client saying "Hello".
     The client provides information including the following:
@@ -487,7 +487,7 @@ pub:
 
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Hello</div>
+<div class="rec-label">Server Hello Datagram</div>
 <div class="rec-explanation">
     The server says "Hello" back.  The server provides information including the following:
     <ul>
@@ -853,7 +853,7 @@ $ ./curve25519-mult client-ephemeral-private.key \
 </div>
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Encrypted Extensions</div>
+<div class="rec-label">Server Encrypted Extensions Datagram</div>
 <!--suppress CheckImageSize -->
 <img class="illustration" src="images/key5.png" width="124" height="250"/>
 <div class="rec-explanation">
@@ -884,9 +884,9 @@ $ ./curve25519-mult client-ephemeral-private.key \
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
@@ -1090,7 +1090,7 @@ $ cat /tmp/msg1 \
 </div>
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Certificate</div>
+<div class="rec-label">Server Certificate Datagram</div>
 <!--suppress CheckImageSize -->
 <img class="illustration" src="images/key3.png" width="130" height="250"/>
 <div class="rec-explanation">
@@ -1129,9 +1129,9 @@ $ cat /tmp/msg1 \
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
@@ -1434,7 +1434,7 @@ $ cat /tmp/msg1 \
 </div>
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Certificate Verify</div>
+<div class="rec-label">Server Cert Verify Datagram</div>
 <!--suppress CheckImageSize -->
 <img class="illustration" src="images/key5.png" width="124" height="250"/>
 <div class="rec-explanation">
@@ -1461,9 +1461,9 @@ $ cat /tmp/msg1 \
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
@@ -1734,7 +1734,7 @@ Verified OK
 </div>
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Handshake Finished</div>
+<div class="rec-label">Server Handshake Finished Datagram</div>
 <div class="rec-explanation">
     To verify that the handshake was successful and not tampered
     with, the server calculates verification data that client will agree on.
@@ -1760,9 +1760,9 @@ Verified OK
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
@@ -1977,7 +1977,7 @@ $ echo $fin_hash | xxd -r -p \
 </div>
 <div class="rec-outer">
 <div class="record client">
-<div class="rec-label">Client Handshake Finished</div>
+<div class="rec-label">Client Handshake Finished Datagram</div>
 <div class="rec-explanation">
     To verify that the handshake was successful and not tampered
     with, the client calculates verification data that the
@@ -2004,9 +2004,9 @@ $ echo $fin_hash | xxd -r -p \
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
@@ -2337,7 +2337,7 @@ server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
 </div>
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server ACK</div>
+<div class="rec-label">Server ACK Datagram</div>
 <div class="rec-explanation">
     <p>
     Each peer must respond to or acknowledge data received from the other
@@ -2364,9 +2364,9 @@ server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
@@ -2526,7 +2526,7 @@ $ cat /tmp/msg1 \
 </div>
 <div class="rec-outer">
 <div class="record client">
-<div class="rec-label">Client Application Data</div>
+<div class="rec-label">Client Application Data Datagram</div>
 <div class="rec-explanation">
     The client sends the data "ping".
 </div>
@@ -2549,9 +2549,9 @@ $ cat /tmp/msg1 \
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
@@ -2693,7 +2693,7 @@ $ cat /tmp/msg1 \
 </div>
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Application Data</div>
+<div class="rec-label">Server Application Data Datagram</div>
 <div class="rec-explanation">
     The server replies with the data "pong".
 </div>
@@ -2716,9 +2716,9 @@ $ cat /tmp/msg1 \
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
@@ -2860,7 +2860,7 @@ $ cat /tmp/msg1 \
 </div>
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Alert</div>
+<div class="rec-label">Server Alert Datagram</div>
 <div class="rec-explanation">
     The server sends an "alert" to indicate an orderly shutdown.
 </div>
@@ -2883,9 +2883,9 @@ $ cat /tmp/msg1 \
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>

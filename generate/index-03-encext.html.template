@@ -1,6 +1,6 @@
 <div class="rec-outer">
 <div class="record server">
-<div class="rec-label">Server Encrypted Extensions</div>
+<div class="rec-label">Server Encrypted Extensions Datagram</div>
 <!--suppress CheckImageSize -->
 <img class="illustration" src="images/key5.png" width="124" height="250"/>
 <div class="rec-explanation">
@@ -33,9 +33,9 @@
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>

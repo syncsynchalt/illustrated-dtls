@@ -54,7 +54,7 @@ pub:
 %file ../captures/caps/record-chello
 <div class="rec-outer">
 <div class="record client">
-<div class="rec-label">Client Hello</div>
+<div class="rec-label">Client Hello Datagram</div>
 <div class="rec-explanation">
     The encrypted session begins with the client saying "Hello".
     The client provides information including the following:
