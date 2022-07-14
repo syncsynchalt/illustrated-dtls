@@ -40,11 +40,11 @@
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>10</tt></td><td>Encryption epoch 2 - handshake keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
     </span>
@@ -137,7 +137,7 @@ ed2a
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -183,8 +183,8 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each handshake message starts with a type and a length.
             <ul>
-            <li><tt>%0</tt> - handshake message type 0x0b (certificate)
-            <li><tt>%1 %2 %3</tt> - %nnn1 bytes of handshake message data within
+            <li><xtt>%0</xtt> - handshake message type 0x0b (certificate)
+            <li><xtt>%1 %2 %3</xtt> - %nnn1 bytes of handshake message data within
             </ul>
         </div>
     </span>
@@ -221,7 +221,7 @@ $ cat /tmp/msg1 \
             This record is empty because this certificate was not sent in
             response to a Certificate Request.
             <ul>
-            <li><tt>%0</tt> - %n0 bytes of request context follows
+            <li><xtt>%0</xtt> - %n0 bytes of request context follows
             </ul>
         </div>
     </span>
@@ -234,7 +234,7 @@ $ cat /tmp/msg1 \
         </span>
         <div class="explanation">
             <ul>
-            <li><tt>%0 %1 %2</tt> - %nnn0 bytes of certificates follow
+            <li><xtt>%0 %1 %2</xtt> - %nnn0 bytes of certificates follow
             </ul>
         </div>
     </span>
@@ -248,7 +248,7 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             The length of the first (and only) certificate.
             <ul>
-            <li><tt>%0 %1 %2</tt> - %nnn0 bytes of certificate follows
+            <li><xtt>%0 %1 %2</xtt> - %nnn0 bytes of certificate follows
             </ul>
         </div>
     </span>
@@ -287,7 +287,7 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             The server can provide extension data for the certificate.
             <ul>
-            <li><tt>%0 %1</tt> - %nn0 bytes of extension data follows
+            <li><xtt>%0 %1</xtt> - %nn0 bytes of extension data follows
             </ul>
         </div>
     </span>
@@ -299,11 +299,9 @@ $ cat /tmp/msg1 \
 %bytes
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>%0</tt> - type is 22 (handshake record)
+            <li><xtt>%0</xtt> - type is 22 (handshake record)
             </ul>
         </div>
     </span>

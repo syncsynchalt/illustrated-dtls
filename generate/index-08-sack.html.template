@@ -28,11 +28,11 @@
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
     </span>
@@ -125,7 +125,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -162,7 +162,7 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each ACK message starts with a payload length.
             <ul>
-            <li><tt>%0 %1</tt> - %nn0 bytes of ACK data within
+            <li><xtt>%0 %1</xtt> - %nn0 bytes of ACK data within
             </ul>
         </div>
     </span>
@@ -189,11 +189,9 @@ $ cat /tmp/msg1 \
 %bytes
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>%0</tt> - type is %d0 (ACK record)
+            <li><xtt>%0</xtt> - type is %d0 (ACK record)
             </ul>
         </div>
     </span>

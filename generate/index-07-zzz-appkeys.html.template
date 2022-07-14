@@ -16,8 +16,8 @@
     The hash input does not include cleartext record headers,
     DTLS-only record headers, or 1-byte decrypted record trailers.
 
-    This "handshake_hash" is <tt class="longboi"
-    >77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b</tt>:
+    This "handshake_hash" is <xtt class="longboi"
+    >77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b</xtt>:
     <codesample>
     <pre><code>$ (
   cat record-chello  | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/';
@@ -85,12 +85,12 @@ server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
 
     From this we get the following key data:
     <ul>
-    <li>server application key: <tt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</tt>
-    <li>server application IV: <tt class="longboi">582f5a11bdaf973fe3ffeb4e</tt>
-    <li>client application key: <tt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</tt>
-    <li>client application IV: <tt class="longboi">682219974631fa0656ee4eff</tt>
-    <li>client record number key: <tt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</tt>
-    <li>server record number key: <tt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</tt>
+    <li>server application key: <xtt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</xtt>
+    <li>server application IV: <xtt class="longboi">582f5a11bdaf973fe3ffeb4e</xtt>
+    <li>client application key: <xtt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</xtt>
+    <li>client application IV: <xtt class="longboi">682219974631fa0656ee4eff</xtt>
+    <li>client record number key: <xtt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</xtt>
+    <li>server record number key: <xtt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</xtt>
     </ul>
 </div>
 </div>
@@ -105,12 +105,12 @@ server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
     It performs the same calculation shown in "Server Application
     Keys Calc" and finds the same values:
     <ul>
-    <li>server application key: <tt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</tt>
-    <li>server application IV: <tt class="longboi">582f5a11bdaf973fe3ffeb4e</tt>
-    <li>client application key: <tt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</tt>
-    <li>client application IV: <tt class="longboi">682219974631fa0656ee4eff</tt>
-    <li>client record number key: <tt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</tt>
-    <li>server record number key: <tt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</tt>
+    <li>server application key: <xtt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</xtt>
+    <li>server application IV: <xtt class="longboi">582f5a11bdaf973fe3ffeb4e</xtt>
+    <li>client application key: <xtt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</xtt>
+    <li>client application IV: <xtt class="longboi">682219974631fa0656ee4eff</xtt>
+    <li>client record number key: <xtt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</xtt>
+    <li>server record number key: <xtt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</xtt>
     </ul>
 </div>
 </div>

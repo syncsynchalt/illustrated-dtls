@@ -173,7 +173,7 @@ pub:
     </span>
 
     <span class="string">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
  00 00 00 00 00 00 00 91
         </span>
@@ -540,7 +540,7 @@ pub:
     </span>
 
     <span class="string">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
  00 00 00 00 00 00 00 56
         </span>
@@ -705,8 +705,8 @@ pub:
     to agree on a number.  The server multiplies the client's
     public key by the server's private key using the curve25519()
     algorithm.  The 32-byte result is found to be:
-    <pre class="ind2"><tt class="longboi"
-    >df4a291baa1eb7cfa6934b29b474baad2697e29f1f920dcc77c8a0a088447624</tt></pre>
+    <pre class="ind2"><xtt class="longboi"
+    >df4a291baa1eb7cfa6934b29b474baad2697e29f1f920dcc77c8a0a088447624</xtt></pre>
     I've provided <a href="files/curve25519-mult.c" download="curve25519-mult.c">a tool</a>
     to perform this calculation:
     <codesample>
@@ -723,8 +723,8 @@ $ ./curve25519-mult server-ephemeral-private.key \
     to this point (ClientHello and ServerHello). The hash does
     not include DTLS-only bytes in the records, which are bytes 0-12 and 17-24. Ignoring these
     bytes allows implementations to share code between TLS and DTLS implementations. This "hello_hash"
-    is <tt class="longboi"
-    >aee8eba0d2ee87052fbbc6864c1514c5a927d6f0ffb4f7954c7f379d95f1b1d7</tt>:
+    is <xtt class="longboi"
+    >aee8eba0d2ee87052fbbc6864c1514c5a927d6f0ffb4f7954c7f379d95f1b1d7</xtt>:
     <codesample>
 <pre><code>$ (cat captures/caps/record-chello | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/';
    cat captures/caps/record-shello | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/') \
@@ -754,7 +754,7 @@ server_sn_key = HKDF-Expand-Label(key: server_secret, label: "sn", ctx: "", len:
 </pre>
     </processblock>
 
-    I've created <a href="files/hkdf.sh" download="hkdf">an HKDF tool</a>
+    I've created <a href="files/hkdf-dtls.sh" download="hkdf-dtls">an HKDF tool</a>
     to perform these operations on the command line.
     The key derivation process is reproduced below:
     <codesample>
@@ -791,12 +791,12 @@ server_sn_key: 7173fac51194e775001d625ef69d7c9f
 
     From this we get the following encryption keys and IVs:
     <ul>
-    <li>client handshake key: <tt class="longboi">6caa2633d5e48f10051e69dc45549c97</tt>
-    <li>client handshake IV: <tt class="longboi">106dc6e393b7a9ea8ef29dd7</tt>
-    <li>server handshake key: <tt class="longboi">004e03e64ab6cba6b542775ec230e20a</tt>
-    <li>server handshake IV: <tt class="longboi">6d9924be044ee97c624913f2</tt>
-    <li>client record number key: <tt class="longboi">beed6218676635c2cb46a45694144fec</tt>
-    <li>server record number key: <tt class="longboi">7173fac51194e775001d625ef69d7c9f</tt>
+    <li>client handshake key: <xtt class="longboi">6caa2633d5e48f10051e69dc45549c97</xtt>
+    <li>client handshake IV: <xtt class="longboi">106dc6e393b7a9ea8ef29dd7</xtt>
+    <li>server handshake key: <xtt class="longboi">004e03e64ab6cba6b542775ec230e20a</xtt>
+    <li>server handshake IV: <xtt class="longboi">6d9924be044ee97c624913f2</xtt>
+    <li>client record number key: <xtt class="longboi">beed6218676635c2cb46a45694144fec</xtt>
+    <li>server record number key: <xtt class="longboi">7173fac51194e775001d625ef69d7c9f</xtt>
     </ul>
 </div>
 </div>
@@ -805,6 +805,7 @@ server_sn_key: 7173fac51194e775001d625ef69d7c9f
 <div class="rec-outer">
 <div class="calculation client">
 <div class="rec-label">Client Handshake Keys Calc</div>
+<!--suppress CheckImageSize -->
 <img class="illustration" src="images/key6.png" width="105" height="250"/>
 <div class="rec-explanation">
     The client now has the information to calculate the
@@ -822,8 +823,8 @@ server_sn_key: 7173fac51194e775001d625ef69d7c9f
     algorithm. The properties of elliptic curve multiplication will
     cause this to result in the same number found by the server in its
     multiplication. The 32-byte result is found to be:
-    <pre class="ind2"><tt class="longboi"
-    >df4a291baa1eb7cfa6934b29b474baad2697e29f1f920dcc77c8a0a088447624</tt></pre>
+    <pre class="ind2"><xtt class="longboi"
+    >df4a291baa1eb7cfa6934b29b474baad2697e29f1f920dcc77c8a0a088447624</xtt></pre>
 
     I've provided <a href="files/curve25519-mult.c" download="curve25519-mult.c">a tool</a>
     to perform this calculation:
@@ -840,12 +841,12 @@ $ ./curve25519-mult client-ephemeral-private.key \
     server in "Server Handshake Keys Calc", the rest of
     the calculation is identical and the same values are found:
     <ul>
-    <li>client handshake key: <tt class="longboi">6caa2633d5e48f10051e69dc45549c97</tt>
-    <li>client handshake IV: <tt class="longboi">106dc6e393b7a9ea8ef29dd7</tt>
-    <li>server handshake key: <tt class="longboi">004e03e64ab6cba6b542775ec230e20a</tt>
-    <li>server handshake IV: <tt class="longboi">6d9924be044ee97c624913f2</tt>
-    <li>client record number key: <tt class="longboi">beed6218676635c2cb46a45694144fec</tt>
-    <li>server record number key: <tt class="longboi">7173fac51194e775001d625ef69d7c9f</tt>
+    <li>client handshake key: <xtt class="longboi">6caa2633d5e48f10051e69dc45549c97</xtt>
+    <li>client handshake IV: <xtt class="longboi">106dc6e393b7a9ea8ef29dd7</xtt>
+    <li>server handshake key: <xtt class="longboi">004e03e64ab6cba6b542775ec230e20a</xtt>
+    <li>server handshake IV: <xtt class="longboi">6d9924be044ee97c624913f2</xtt>
+    <li>client record number key: <xtt class="longboi">beed6218676635c2cb46a45694144fec</xtt>
+    <li>server record number key: <xtt class="longboi">7173fac51194e775001d625ef69d7c9f</xtt>
     </ul>
 </div>
 </div>
@@ -882,11 +883,11 @@ $ ./curve25519-mult client-ephemeral-private.key \
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>10</tt></td><td>Encryption epoch 2 - handshake keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
     </span>
@@ -974,7 +975,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -1009,14 +1010,14 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each handshake message starts with a type and a length.
             <ul>
-            <li><tt>08</tt> - handshake message type 0x08 (encrypted extensions)
-            <li><tt>00 00 12</tt> - 0x12 (18) bytes of handshake message data within
+            <li><xtt>08</xtt> - handshake message type 0x08 (encrypted extensions)
+            <li><xtt>00 00 12</xtt> - 0x12 (18) bytes of handshake message data within
             </ul>
         </div>
     </span>
 
     <span class="string decrypted">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
  00 01 00 00 00 00 00 12
         </span>
@@ -1044,7 +1045,7 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             The server has provided a list of extensions to apply to the connection.
             <ul>
-            <li><tt>00 10</tt> - the extensions will take 0x10 (16) bytes of data
+            <li><xtt>00 10</xtt> - the extensions will take 0x10 (16) bytes of data
             </ul>
         </div>
     </span>
@@ -1060,14 +1061,14 @@ $ cat /tmp/msg1 \
 	        other cryptography types it calls these "supported
 	        groups" instead of "supported curves".
             <ul>
-            <li><tt>00 0a</tt> - assigned value for extension "Supported Groups"
-            <li><tt>00 0c</tt> - 0xC (12) bytes of "supported group" extension data follows
-            <li><tt>00 0a</tt> - 0xA (10) bytes of data are in the curves list
-            <li><tt>00 17</tt> - assigned value for curve "secp256r1"
-            <li><tt>00 1d</tt> - assigned value for curve "x25519"
-            <li><tt>00 18</tt> - assigned value for curve "secp384r1"
-            <li><tt>00 19</tt> - assigned value for curve "secp521r1"
-            <li><tt>01 00</tt> - assigned value for group "ffdhe2048"
+            <li><xtt>00 0a</xtt> - assigned value for extension "Supported Groups"
+            <li><xtt>00 0c</xtt> - 0xC (12) bytes of "supported group" extension data follows
+            <li><xtt>00 0a</xtt> - 0xA (10) bytes of data are in the curves list
+            <li><xtt>00 17</xtt> - assigned value for curve "secp256r1"
+            <li><xtt>00 1d</xtt> - assigned value for curve "x25519"
+            <li><xtt>00 18</xtt> - assigned value for curve "secp384r1"
+            <li><xtt>00 19</xtt> - assigned value for curve "secp521r1"
+            <li><xtt>01 00</xtt> - assigned value for group "ffdhe2048"
             </ul>
         </div>
     </span>
@@ -1078,11 +1079,9 @@ $ cat /tmp/msg1 \
  16
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>16</tt> - type is 22 (handshake record)
+            <li><xtt>16</xtt> - type is 22 (handshake record)
             </ul>
         </div>
     </span>
@@ -1129,11 +1128,11 @@ $ cat /tmp/msg1 \
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>10</tt></td><td>Encryption epoch 2 - handshake keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
     </span>
@@ -1246,7 +1245,7 @@ ed2a
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -1290,14 +1289,14 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each handshake message starts with a type and a length.
             <ul>
-            <li><tt>0b</tt> - handshake message type 0x0b (certificate)
-            <li><tt>00 03 2e</tt> - 0x32E (814) bytes of handshake message data within
+            <li><xtt>0b</xtt> - handshake message type 0x0b (certificate)
+            <li><xtt>00 03 2e</xtt> - 0x32E (814) bytes of handshake message data within
             </ul>
         </div>
     </span>
 
     <span class="string decrypted">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
  00 02 00 00 00 00 03 2e
         </span>
@@ -1326,7 +1325,7 @@ $ cat /tmp/msg1 \
             This record is empty because this certificate was not sent in
             response to a Certificate Request.
             <ul>
-            <li><tt>00</tt> - 0 bytes of request context follows
+            <li><xtt>00</xtt> - 0 bytes of request context follows
             </ul>
         </div>
     </span>
@@ -1338,7 +1337,7 @@ $ cat /tmp/msg1 \
         </span>
         <div class="explanation">
             <ul>
-            <li><tt>00 03 2a</tt> - 0x32A (810) bytes of certificates follow
+            <li><xtt>00 03 2a</xtt> - 0x32A (810) bytes of certificates follow
             </ul>
         </div>
     </span>
@@ -1351,7 +1350,7 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             The length of the first (and only) certificate.
             <ul>
-            <li><tt>00 03 25</tt> - 0x325 (805) bytes of certificate follows
+            <li><xtt>00 03 25</xtt> - 0x325 (805) bytes of certificate follows
             </ul>
         </div>
     </span>
@@ -1413,7 +1412,7 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             The server can provide extension data for the certificate.
             <ul>
-            <li><tt>00 00</tt> - 0 bytes of extension data follows
+            <li><xtt>00 00</xtt> - 0 bytes of extension data follows
             </ul>
         </div>
     </span>
@@ -1424,11 +1423,9 @@ $ cat /tmp/msg1 \
  16
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>16</tt> - type is 22 (handshake record)
+            <li><xtt>16</xtt> - type is 22 (handshake record)
             </ul>
         </div>
     </span>
@@ -1463,11 +1460,11 @@ $ cat /tmp/msg1 \
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>10</tt></td><td>Encryption epoch 2 - handshake keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
     </span>
@@ -1563,7 +1560,7 @@ a43c
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -1602,14 +1599,14 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each handshake message starts with a type and a length.
             <ul>
-            <li><tt>0f</tt> - handshake message type 0x0f (certificate verify)
-            <li><tt>00 01 04</tt> - 0x104 (260) bytes of handshake message data within
+            <li><xtt>0f</xtt> - handshake message type 0x0f (certificate verify)
+            <li><xtt>00 01 04</xtt> - 0x104 (260) bytes of handshake message data within
             </ul>
         </div>
     </span>
 
     <span class="string decrypted">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
  00 03 00 00 00 00 01 04
         </span>
@@ -1660,9 +1657,9 @@ $ cat /tmp/msg1 \
             the client by using the certificate's public
             key.
             <ul>
-            <li><tt>08 04</tt> - reserved value for RSA-PSS-RSAE-SHA256 signature
-            <li><tt>01 00</tt> - 0x100 (256) bytes of signature data follows
-            <li><tt>2c 76 3d ... 4f 9d 65</tt> - a signature over this handshake's hash
+            <li><xtt>08 04</xtt> - reserved value for RSA-PSS-RSAE-SHA256 signature
+            <li><xtt>01 00</xtt> - 0x100 (256) bytes of signature data follows
+            <li><xtt>2c 76 3d ... 4f 9d 65</xtt> - a signature over this handshake's hash
             </ul>
             The signing process can't be reproduced byte-for-byte
             at the command line because the signing tool introduces
@@ -1679,7 +1676,7 @@ $ handshake_hash=$((
    cat record-chello | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/s';
    cat record-shello | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/s';
    cat record-encext | perl -0777 -pe 's/(.{4}).{8}(.*).$/$1$2/s';
-   cat record-cert | perl -0777 -pe 's/(.{4}).{8}(.*).$/$1$2/s';
+   cat record-cert   | perl -0777 -pe 's/(.{4}).{8}(.*).$/$1$2/s';
    )| openssl sha256)
 
 ### build the data that was signed:
@@ -1726,11 +1723,9 @@ Verified OK
  16
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>16</tt> - type is 22 (handshake record)
+            <li><xtt>16</xtt> - type is 22 (handshake record)
             </ul>
         </div>
     </span>
@@ -1764,11 +1759,11 @@ Verified OK
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>10</tt></td><td>Encryption epoch 2 - handshake keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
     </span>
@@ -1857,7 +1852,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -1894,14 +1889,14 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each handshake message starts with a type and a length.
             <ul>
-            <li><tt>14</tt> - handshake message type 0x14 (finished)
-            <li><tt>00 00 20</tt> - 0x20 (32) bytes of handshake message data within
+            <li><xtt>14</xtt> - handshake message type 0x14 (finished)
+            <li><xtt>00 00 20</xtt> - 0x20 (32) bytes of handshake message data within
             </ul>
         </div>
     </span>
 
     <span class="string decrypted">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
  00 04 00 00 00 00 00 20
         </span>
@@ -1971,11 +1966,9 @@ $ echo $fin_hash | xxd -r -p \
  16
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>16</tt> - type is 22 (handshake record)
+            <li><xtt>16</xtt> - type is 22 (handshake record)
             </ul>
         </div>
     </span>
@@ -2010,11 +2003,11 @@ $ echo $fin_hash | xxd -r -p \
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>10</tt></td><td>Encryption epoch 2 - handshake keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
     </span>
@@ -2103,7 +2096,7 @@ c248
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -2139,14 +2132,14 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each handshake message starts with a type and a length.
             <ul>
-            <li><tt>14</tt> - handshake message type 0x14 (finished)
-            <li><tt>00 00 20</tt> - 0x20 (32) bytes of handshake message data within
+            <li><xtt>14</xtt> - handshake message type 0x14 (finished)
+            <li><xtt>00 00 20</xtt> - 0x20 (32) bytes of handshake message data within
             </ul>
         </div>
     </span>
 
     <span class="string decrypted">
-        <span class="label">Reconstruction Data</span>
+        <span class="label">Handshake Reconstruction Data</span>
         <span class="bytes">
  00 01 00 00 00 00 00 20
         </span>
@@ -2216,11 +2209,9 @@ $ echo $fin_hash | xxd -r -p \
  16
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>16</tt> - type is 22 (handshake record)
+            <li><xtt>16</xtt> - type is 22 (handshake record)
             </ul>
         </div>
     </span>
@@ -2245,8 +2236,8 @@ $ echo $fin_hash | xxd -r -p \
     The hash input does not include cleartext record headers,
     DTLS-only record headers, or 1-byte decrypted record trailers.
 
-    This "handshake_hash" is <tt class="longboi"
-    >77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b</tt>:
+    This "handshake_hash" is <xtt class="longboi"
+    >77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b</xtt>:
     <codesample>
     <pre><code>$ (
   cat record-chello  | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/';
@@ -2314,12 +2305,12 @@ server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
 
     From this we get the following key data:
     <ul>
-    <li>server application key: <tt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</tt>
-    <li>server application IV: <tt class="longboi">582f5a11bdaf973fe3ffeb4e</tt>
-    <li>client application key: <tt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</tt>
-    <li>client application IV: <tt class="longboi">682219974631fa0656ee4eff</tt>
-    <li>client record number key: <tt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</tt>
-    <li>server record number key: <tt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</tt>
+    <li>server application key: <xtt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</xtt>
+    <li>server application IV: <xtt class="longboi">582f5a11bdaf973fe3ffeb4e</xtt>
+    <li>client application key: <xtt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</xtt>
+    <li>client application IV: <xtt class="longboi">682219974631fa0656ee4eff</xtt>
+    <li>client record number key: <xtt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</xtt>
+    <li>server record number key: <xtt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</xtt>
     </ul>
 </div>
 </div>
@@ -2334,12 +2325,12 @@ server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
     It performs the same calculation shown in "Server Application
     Keys Calc" and finds the same values:
     <ul>
-    <li>server application key: <tt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</tt>
-    <li>server application IV: <tt class="longboi">582f5a11bdaf973fe3ffeb4e</tt>
-    <li>client application key: <tt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</tt>
-    <li>client application IV: <tt class="longboi">682219974631fa0656ee4eff</tt>
-    <li>client record number key: <tt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</tt>
-    <li>server record number key: <tt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</tt>
+    <li>server application key: <xtt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</xtt>
+    <li>server application IV: <xtt class="longboi">582f5a11bdaf973fe3ffeb4e</xtt>
+    <li>client application key: <xtt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</xtt>
+    <li>client application IV: <xtt class="longboi">682219974631fa0656ee4eff</xtt>
+    <li>client record number key: <xtt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</xtt>
+    <li>server record number key: <xtt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</xtt>
     </ul>
 </div>
 </div>
@@ -2372,11 +2363,11 @@ server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
     </span>
@@ -2464,7 +2455,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -2499,7 +2490,7 @@ $ cat /tmp/msg1 \
         <div class="explanation">
             Each ACK message starts with a payload length.
             <ul>
-            <li><tt>00 10</tt> - 0x10 (16) bytes of ACK data within
+            <li><xtt>00 10</xtt> - 0x10 (16) bytes of ACK data within
             </ul>
         </div>
     </span>
@@ -2524,11 +2515,9 @@ $ cat /tmp/msg1 \
  1a
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>1a</tt> - type is 26 (ACK record)
+            <li><xtt>1a</xtt> - type is 26 (ACK record)
             </ul>
         </div>
     </span>
@@ -2559,11 +2548,11 @@ $ cat /tmp/msg1 \
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
     </span>
@@ -2651,7 +2640,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -2693,11 +2682,9 @@ $ cat /tmp/msg1 \
  17
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>17</tt> - type is 23 (application data)
+            <li><xtt>17</xtt> - type is 23 (application data)
             </ul>
         </div>
     </span>
@@ -2728,11 +2715,11 @@ $ cat /tmp/msg1 \
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
     </span>
@@ -2820,7 +2807,7 @@ a259
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -2862,11 +2849,9 @@ $ cat /tmp/msg1 \
  17
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>17</tt> - type is 23 (application data)
+            <li><xtt>17</xtt> - type is 23 (application data)
             </ul>
         </div>
     </span>
@@ -2897,11 +2882,11 @@ $ cat /tmp/msg1 \
               <th>Val</th>
               <th>Meaning</th>
             </tr></thead>
-            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
-            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
-            <tr><td>LSB</td><td><tt>11</tt></td><td>Encryption epoch 3 - first application keys</td></tr>
+            <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><xtt>0</xtt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><xtt>11</xtt></td><td>Encryption epoch 3 - first application keys</td></tr>
             </table>
         </div>
     </span>
@@ -2989,7 +2974,7 @@ $ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
             data that must match for the decryption to
             succeed.
             <br/><br/>
-            Because the <tt>openssl</tt> command line
+            Because the <xtt>openssl</xtt> command line
             tool does not yet support AEAD ciphers,
             I've written command line tools to both
             <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
@@ -3025,6 +3010,7 @@ $ cat /tmp/msg1 \
             <ul>
             <li><xtt>01</xtt> - alert level 1 (warning) - unused
             <li><xtt>00</xtt> - alert number 0 (close_notify)
+            </ul>
         </div>
     </span>
 
@@ -3034,11 +3020,9 @@ $ cat /tmp/msg1 \
  15
         </span>
         <div class="explanation">
-            Each TLS 1.3 record disguised as TLS 1.2
-            application data has a final byte
-            which indicates its actual record type.
+            Each encrypted DTLS 1.3 record has a final byte which indicates its actual record type.
             <ul>
-            <li><tt>15</tt> - type is 21 (alert)
+            <li><xtt>15</xtt> - type is 21 (alert)
             </ul>
         </div>
     </span>
