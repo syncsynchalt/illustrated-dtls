@@ -88,22 +88,6 @@
         });
     };
 
-    ill.injectEmbedArrows = () => {
-        let els = document.querySelectorAll(".record.embedded");
-        [].forEach.call(els, (r) => {
-            let arrow = document.createElement("div"),
-                parent = r.parentNode;
-            arrow.setAttribute("class", "embed-arrow");
-            // arrow.innerText = "🔒";
-            // arrow.innerText = "🔑";
-            // arrow.innerText = "🤝";
-            // arrow.innerText = "🗝";
-            // arrow.innerText = "🤫";
-            arrow.innerText = "➥";
-            parent.insertBefore(arrow, r);
-        });
-    };
-
     ill.toggleHeaderProtection = () => {
         let els = document.querySelectorAll(".bytes.protected");
         [].forEach.call(els, (el) => { el.classList.toggle("hp-disabled"); });

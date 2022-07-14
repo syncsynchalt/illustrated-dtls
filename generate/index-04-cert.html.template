@@ -1,0 +1,313 @@
+<div class="rec-outer">
+<div class="record server">
+<div class="rec-label">Server Certificate</div>
+<!--suppress CheckImageSize -->
+<img class="illustration" src="images/key3.png" width="130" height="250"/>
+<div class="rec-explanation">
+    The server sends one or more certificates:
+    <ul>
+    <li>the certificate for this host, containing the hostname,
+    a public key, and a signature from a third party asserting
+    that the owner of the certificate's hostname holds the
+    private key for this certificate
+    <li>an optional list of further certificates, each of which signs
+    the previous certificate, and which form a chain of trust
+    leading from the host certificate to a trusted certificate
+    that has been pre-installed on the client
+    </ul>
+    In an effort to keep this example small we only send a
+    host certificate.  Certificates are in a binary format
+    called DER <a href="certificate.html" target="_blank">which
+    you can explore here</a>.
+</div>
+%file ../captures/caps/04-cert-shs-prot
+<span class="record-data">
+    <span class="string">
+        <span class="label">Unified Header Byte</span>
+        <span class="bytes">
+%next 1
+%bytes
+        </span>
+        <div class="explanation">
+            An encrypted DTLS packet starts with the "Unified Header". This
+            byte gives information on the structure and decryption epoch of
+            the header and packet.
+            <p>
+            The bits in the value %x0 have the following meaning:
+            <table class="bits">
+            <thead><tr>
+              <th></th>
+              <th>Val</th>
+              <th>Meaning</th>
+            </tr></thead>
+            <tr><td>MSB</td><td><tt>001</tt></td><td>Fixed bits</td></tr>
+            <tr><td></td><td><tt>0</tt></td><td>Connection ID is not present in header</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>Sequence number in header is 2 bytes long</td></tr>
+            <tr><td></td><td><tt>1</tt></td><td>2-byte length is present in header</td></tr>
+            <tr><td>LSB</td><td><tt>10</tt></td><td>Encryption epoch 2 - handshake keys</td></tr>
+            </table>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Number</span>
+        <span class="bytes protected">
+%next 2
+%bytes
+        </span>
+        <span class="bytes unprotected">
+00 01
+        </span>
+        <div class="explanation">
+            <button class="hp-toggle">Disable record number encryption</button><br>
+            The record number of the packet is encrypted, to prevent middleware
+            from interpreting or interfering with the sequencing of packets.
+            <br><br>
+            This encryption is applied by encrypting a sample of each packet's
+            payload with the "record number key", then XOR'ing certain bits
+            and bytes in each packet with the resulting data.
+            <br><br>
+            An example of how to compute record number encryption:
+            <codesample>
+<pre><code>### "server record number key" from handshake keys calc step above
+$ key=7173fac51194e775001d625ef69d7c9f
+### sample is taken from 16 bytes of payload starting 5 bytes into the record
+$ sample=d3777e1adf9e98c8c4ffa072c2c3b6bb
+$ echo $sample | xxd -r -p | openssl aes-128-ecb -K $key | head -c 2 | xxd -p
+
+ed2a
+
+### these bytes are xor'd one-for-one into the bytes of the record number
+</code></pre>
+            </codesample>
+        </div>
+    </span>
+
+    <span class="string">
+        <span class="label">Record Length</span>
+        <span class="bytes">
+%next 2
+%bytes
+        </span>
+        <div class="explanation">
+            Each record is assumed to consume the remainder of the datagram unless this
+            optional length is given. This allows implementations to send several TLS records
+            in a single datagram (though this connection does not take advantage of this).
+            <ul>
+            <li><xtt>%0 %1</xtt> - Record length of %nn0 bytes
+            </ul>
+        </div>
+    </span>
+
+    <span class="string encrypted">
+        <span class="label">Encrypted Data</span>
+        <span class="bytes">
+%next 827
+%bytes
+        </span>
+        <div class="explanation">
+            This data is encrypted with the server handshake key.
+        </div>
+    </span>
+    <span class="string">
+        <span class="label">Auth Tag</span>
+        <span class="bytes">
+%next 16
+%bytes
+        </span>
+        <div class="explanation">
+            This is the AEAD authentication tag
+            that protects the integrity of the
+            encrypted data and the record header.
+        </div>
+    </span>
+%empty
+
+    <div class="decryption">
+        <div class="label">Decryption</div>
+        <div class="explanation">
+            This data is encrypted using the server
+            handshake key and the server handshake IV that were
+            generated during the "Server Handshake Keys
+            Calc" step.  The IV will be modified
+            by XOR'ing it by the count of records that
+            have already been encrypted with this key,
+            which in this case is 1.  The process also
+            takes as input the 5-byte record header, as authenticated
+            data that must match for the decryption to
+            succeed.
+            <br/><br/>
+            Because the <tt>openssl</tt> command line
+            tool does not yet support AEAD ciphers,
+            I've written command line tools to both
+            <a href="files/aes_128_gcm_decrypt.c" download="aes_128_gcm_decrypt.c">decrypt</a>
+            and <a href="files/aes_128_gcm_encrypt.c" download="aes_128_gcm_encrypt.c">encrypt</a>
+            this data.
+            <codesample>
+<pre><code>### from the "Server Handshake Keys Calc" step
+$ key=004e03e64ab6cba6b542775ec230e20a
+$ iv=6d9924be044ee97c624913f2
+### from this record
+$ recdata=2e0001034b
+$ authtag=a43070214522938c0e66829ef133349b
+$ recordnum=1
+### may need to add -I and -L flags for include and lib dirs
+$ cc -o aes_128_gcm_decrypt aes_128_gcm_decrypt.c -lssl -lcrypto
+$ cat /tmp/msg1 \
+  | ./aes_128_gcm_decrypt $iv $recordnum $key $recdata $authtag \
+  | hexdump -C
+
+00000000  0b 00 03 2e 00 02 00 00  00 00 03 2e 00 00 03 2a  |...............*|
+00000010  00 03 25 30 82 03 21 30  82 02 09 a0 03 02 01 02  |..%0..!0...?....|
+00000020  02 08 15 5a 92 ad c2 04  8f 90 30 0d 06 09 2a 86  |...Z.??...0...*.|
+00000030  48 86 f7 0d 01 01 0b 05  00 30 22 31 0b 30 09 06  |H.?......0"1.0..|
+00000040  03 55 04 06 13 02 55 53  31 13 30 11 06 03 55 04  |.U....US1.0...U.|
+00000050  0a 13 0a 45 78 61 6d 70  6c 65 20 43 41 30 1e 17  |...Example CA0..|
+00000060  0d 31 38 31 30 30 35 30  31 33 38 31 37 5a 17 0d  |.181005013817Z..|
+00000070  31 39 31 30 30 35 30 31  33 38 31 37 5a 30 2b 31  |191005013817Z0+1|
+00000080  0b 30 09 06 03 55 04 06  13 02 55 53 31 1c 30 1a  |.0...U....US1.0.|
+00000090  06 03 55 04 03 13 13 65  78 61 6d 70 6c 65 2e 75  |..U....example.u|
+... snip ...
+</code></pre>
+            </codesample>
+        </div>
+    </div>
+
+%file ../captures/caps/record-cert
+    <span class="string decrypted">
+        <span class="label">Handshake Header</span>
+        <span class="bytes">
+%next 4
+%bytes
+        </span>
+        <div class="explanation">
+            Each handshake message starts with a type and a length.
+            <ul>
+            <li><tt>%0</tt> - handshake message type 0x0b (certificate)
+            <li><tt>%1 %2 %3</tt> - %nnn1 bytes of handshake message data within
+            </ul>
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Reconstruction Data</span>
+        <span class="bytes">
+%next 8
+%bytes
+        </span>
+        <div class="explanation">
+            Because UDP does not guarantee delivery or ordering, and
+            because UDP datagrams might be smaller than handshake records that need
+            to be sent, values must be provided to support record re-construction
+            in case of data loss, reordering, or fragmentation.
+            <ul>
+            <li><xtt>%0 %1</xtt> - handshake message sequence number %nn0
+            <li><xtt>%2 %3 %4</xtt> - fragment offset of %nnn2 bytes
+            <li><xtt>%5 %6 %7</xtt> - fragment length of %nnn5 bytes
+            </ul>
+            <p>
+            In this case the entire handshake record fits within a single UDP datagram,
+            indicated by offset of zero and length of the full handshake record length.
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Request Context</span>
+        <span class="bytes">
+%next 1
+%bytes
+        </span>
+        <div class="explanation">
+            This record is empty because this certificate was not sent in
+            response to a Certificate Request.
+            <ul>
+            <li><tt>%0</tt> - %n0 bytes of request context follows
+            </ul>
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Certificates Length</span>
+        <span class="bytes">
+%next 3
+%bytes
+        </span>
+        <div class="explanation">
+            <ul>
+            <li><tt>%0 %1 %2</tt> - %nnn0 bytes of certificates follow
+            </ul>
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Certificate Length</span>
+        <span class="bytes">
+%next 3
+%bytes
+        </span>
+        <div class="explanation">
+            The length of the first (and only) certificate.
+            <ul>
+            <li><tt>%0 %1 %2</tt> - %nnn0 bytes of certificate follows
+            </ul>
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Certificate</span>
+        <span class="bytes">
+%next 805
+%bytes
+        </span>
+        <div class="explanation">
+            The certificate is in ASN.1 DER
+            encoding.  The details of this format and
+            the content of this binary payload are
+            documented <a href="certificate.html" target="_blank">on another page</a>.
+            <a href="files/server.crt" download="server.crt">The certificate</a>
+            can be converted to the binary data in this message
+            at the command line:
+            <codesample>
+<pre><code>$ openssl x509 -outform der &lt; server.crt | hexdump
+
+0000000 30 82 03 21 30 82 02 09 a0 03 02 01 02 02 08 15
+0000010 5a 92 ad c2 04 8f 90 30 0d 06 09 2a 86 48 86 f7
+... snip ...
+</code></pre>
+            </codesample>
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Certificate Extensions</span>
+        <span class="bytes">
+%next 2
+%bytes
+        </span>
+        <div class="explanation">
+            The server can provide extension data for the certificate.
+            <ul>
+            <li><tt>%0 %1</tt> - %nn0 bytes of extension data follows
+            </ul>
+        </div>
+    </span>
+
+    <span class="string decrypted">
+        <span class="label">Record Type</span>
+        <span class="bytes">
+%next 1
+%bytes
+        </span>
+        <div class="explanation">
+            Each TLS 1.3 record disguised as TLS 1.2
+            application data has a final byte
+            which indicates its actual record type.
+            <ul>
+            <li><tt>%0</tt> - type is 0x16 (handshake record)
+            </ul>
+        </div>
+    </span>
+</span>
+</div>
+</div>
+%empty

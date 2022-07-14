@@ -58,10 +58,12 @@ derived_secret = HKDF-Expand-Label(key: early_secret, label: "derived", ctx: emp
 handshake_secret = HKDF-Extract(salt: derived_secret, key: shared_secret)
 client_secret = HKDF-Expand-Label(key: handshake_secret, label: "c hs traffic", ctx: hello_hash, len: 32)
 server_secret = HKDF-Expand-Label(key: handshake_secret, label: "s hs traffic", ctx: hello_hash, len: 32)
-client_key = HKDF-Expand-Label(key: client_secret, label: "quic key", ctx: "", len: 16)
-server_key = HKDF-Expand-Label(key: server_secret, label: "quic key", ctx: "", len: 16)
-client_iv = HKDF-Expand-Label(key: client_secret, label: "quic iv", ctx: "", len: 12)
-server_iv = HKDF-Expand-Label(key: server_secret, label: "quic iv", ctx: "", len: 12)
+client_key = HKDF-Expand-Label(key: client_secret, label: "key", ctx: "", len: 16)
+server_key = HKDF-Expand-Label(key: server_secret, label: "key", ctx: "", len: 16)
+client_iv = HKDF-Expand-Label(key: client_secret, label: "iv", ctx: "", len: 12)
+server_iv = HKDF-Expand-Label(key: server_secret, label: "iv", ctx: "", len: 12)
+client_sn_key = HKDF-Expand-Label(key: client_secret, label: "sn", ctx: "", len: 16)
+server_sn_key = HKDF-Expand-Label(key: server_secret, label: "sn", ctx: "", len: 16)
 </pre>
     </processblock>
 
@@ -82,15 +84,21 @@ $ client_handshake_key=$(./hkdf-dtls expandlabel $csecret "key" "" 16)
 $ server_handshake_key=$(./hkdf-dtls expandlabel $ssecret "key" "" 16)
 $ client_handshake_iv=$(./hkdf-dtls expandlabel $csecret "iv" "" 12)
 $ server_handshake_iv=$(./hkdf-dtls expandlabel $ssecret "iv" "" 12)
+$ client_sn_key=$(./hkdf-dtls expandlabel $csecret "sn" "" 16)
+$ server_sn_key=$(./hkdf-dtls expandlabel $ssecret "sn" "" 16)
 $ echo client_key: $client_handshake_key
 $ echo client_iv: $client_handshake_iv
 $ echo server_key: $server_handshake_key
 $ echo server_iv: $server_handshake_iv
+$ echo client_sn_key: $client_sn_key
+$ echo server_sn_key: $server_sn_key
 
 client_key: 6caa2633d5e48f10051e69dc45549c97
 client_iv: 106dc6e393b7a9ea8ef29dd7
 server_key: 004e03e64ab6cba6b542775ec230e20a
 server_iv: 6d9924be044ee97c624913f2
+client_sn_key: beed6218676635c2cb46a45694144fec
+server_sn_key: 7173fac51194e775001d625ef69d7c9f
 </code></pre>
     </codesample>
 
@@ -100,6 +108,8 @@ server_iv: 6d9924be044ee97c624913f2
     <li>client handshake IV: <tt class="longboi">106dc6e393b7a9ea8ef29dd7</tt>
     <li>server handshake key: <tt class="longboi">004e03e64ab6cba6b542775ec230e20a</tt>
     <li>server handshake IV: <tt class="longboi">6d9924be044ee97c624913f2</tt>
+    <li>client record number key: <tt class="longboi">beed6218676635c2cb46a45694144fec</tt>
+    <li>server record number key: <tt class="longboi">7173fac51194e775001d625ef69d7c9f</tt>
     </ul>
 </div>
 </div>
@@ -147,6 +157,8 @@ $ ./curve25519-mult client-ephemeral-private.key \
     <li>client handshake IV: <tt class="longboi">106dc6e393b7a9ea8ef29dd7</tt>
     <li>server handshake key: <tt class="longboi">004e03e64ab6cba6b542775ec230e20a</tt>
     <li>server handshake IV: <tt class="longboi">6d9924be044ee97c624913f2</tt>
+    <li>client record number key: <tt class="longboi">beed6218676635c2cb46a45694144fec</tt>
+    <li>server record number key: <tt class="longboi">7173fac51194e775001d625ef69d7c9f</tt>
     </ul>
 </div>
 </div>

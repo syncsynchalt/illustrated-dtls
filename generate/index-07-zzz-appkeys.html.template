@@ -1,0 +1,117 @@
+<div class="rec-outer">
+<div class="calculation server">
+<div class="rec-label">Server Application Keys Calc</div>
+<!--suppress CheckImageSize -->
+<img class="illustration" src="images/key9.png" width="97" height="250"/>
+<div class="rec-explanation">
+    The server now has the information to calculate the
+    keys used to encrypt application traffic.
+    It uses the following information in this calculation:
+    <ul>
+    <li>The handshake secret (from "Server Handshake Key Calc")
+    <li>The SHA256 hash of every handshake message from Client Hello to Server Handshake Finished</li>
+    </ul>
+    We calculate the SHA256 hash of all handshake messages to
+    this point (Client Hello through Server Finished).
+    The hash input does not include cleartext record headers,
+    DTLS-only record headers, or 1-byte decrypted record trailers.
+
+    This "handshake_hash" is <tt class="longboi"
+    >77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b</tt>:
+    <codesample>
+    <pre><code>$ (
+  cat record-chello  | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/';
+  cat record-shello  | perl -0777 -pe 's/.{13}(.{4}).{8}/$1/';
+  cat record-encext  | perl -0777 -pe 's/(.{4}).{8}(.*).$/$1$2/s';
+  cat record-cert    | perl -0777 -pe 's/(.{4}).{8}(.*).$/$1$2/s';
+  cat record-cverify | perl -0777 -pe 's/(.{4}).{8}(.*).$/$1$2/s';
+  cat record-sfin    | perl -0777 -pe 's/(.{4}).{8}(.*).$/$1$2/s';
+  )| openssl sha256
+
+77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b
+    </code></pre>
+    </codesample>
+
+    We then feed the hash and the handshake secret into a set of
+    key derivation operations, designed to ensure the integrity
+    of the handshake process and to protect against known and
+    possible attacks:
+
+    <processblock>
+<pre>empty_hash = SHA256("")
+derived_secret = HKDF-Expand-Label(key: handshake_secret, label: "derived", ctx: empty_hash, len: 32)
+master_secret = HKDF-Extract(salt: derived_secret, key: 00...)
+client_secret = HKDF-Expand-Label(key: master_secret, label: "c ap traffic", ctx: handshake_hash, len: 32)
+server_secret = HKDF-Expand-Label(key: master_secret, label: "s ap traffic", ctx: handshake_hash, len: 32)
+client_application_key = HKDF-Expand-Label(key: client_secret, label: "key", ctx: "", len: 16)
+server_application_key = HKDF-Expand-Label(key: server_secret, label: "key", ctx: "", len: 16)
+client_application_iv = HKDF-Expand-Label(key: client_secret, label: "iv", ctx: "", len: 12)
+server_application_iv = HKDF-Expand-Label(key: server_secret, label: "iv", ctx: "", len: 12)
+</pre>
+    </processblock>
+
+    I've created <a href="files/hkdf-dtls.sh" download="hkdf-dtls">an HKDF tool</a>
+    to perform these operations on the command line.
+    <codesample>
+<pre><code>$ handshake_hash=77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b
+$ handshake_secret=d0d1397bb3c445d37f26f7ed00c83b73d2f67540de3761465ffe524f8f944e12
+$ zero_key=0000000000000000000000000000000000000000000000000000000000000000
+$ empty_hash=$(openssl sha256 < /dev/null | sed -e 's/.* //')
+$ derived_secret=$(./hkdf-dtls expandlabel $handshake_secret "derived" $empty_hash 32)
+$ master_secret=$(./hkdf-dtls extract $derived_secret $zero_key)
+$ csecret=$(./hkdf-dtls expandlabel $master_secret "c ap traffic" $handshake_hash 32)
+$ ssecret=$(./hkdf-dtls expandlabel $master_secret "s ap traffic" $handshake_hash 32)
+$ client_application_key=$(./hkdf-dtls expandlabel $csecret "key" "" 16)
+$ server_application_key=$(./hkdf-dtls expandlabel $ssecret "key" "" 16)
+$ client_application_iv=$(./hkdf-dtls expandlabel $csecret "iv" "" 12)
+$ server_application_iv=$(./hkdf-dtls expandlabel $ssecret "iv" "" 12)
+$ client_sn_key=$(./hkdf-dtls expandlabel $csecret "sn" "" 16)
+$ server_sn_key=$(./hkdf-dtls expandlabel $ssecret "sn" "" 16)
+$ echo client_key: $client_application_key
+$ echo client_iv: $client_application_iv
+$ echo server_key: $server_application_key
+$ echo server_iv: $server_application_iv
+$ echo client_sn_key: $client_sn_key
+$ echo server_sn_key: $server_sn_key
+
+client_key: 9ba90dbce8857bc1fcb81d41a0465cfe
+client_iv: 682219974631fa0656ee4eff
+server_key: 2b65fffbbc8189474aa2003c43c32d4d
+server_iv: 582f5a11bdaf973fe3ffeb4e
+client_sn_key: 5cb5bd8bac29777c650c0dde22d16d47
+server_sn_key: 57ba02596c6a1352d7fe8416c7e17d5a
+</code></pre>
+    </codesample>
+
+    From this we get the following key data:
+    <ul>
+    <li>server application key: <tt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</tt>
+    <li>server application IV: <tt class="longboi">582f5a11bdaf973fe3ffeb4e</tt>
+    <li>client application key: <tt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</tt>
+    <li>client application IV: <tt class="longboi">682219974631fa0656ee4eff</tt>
+    <li>client record number key: <tt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</tt>
+    <li>server record number key: <tt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</tt>
+    </ul>
+</div>
+</div>
+</div>
+
+<div class="rec-outer">
+<div class="calculation client">
+<div class="rec-label">Client Application Keys Calc</div>
+<div class="rec-explanation">
+    The client now has the information to calculate the
+    keys used to encrypt application traffic.
+    It performs the same calculation shown in "Server Application
+    Keys Calc" and finds the same values:
+    <ul>
+    <li>server application key: <tt class="longboi">2b65fffbbc8189474aa2003c43c32d4d</tt>
+    <li>server application IV: <tt class="longboi">582f5a11bdaf973fe3ffeb4e</tt>
+    <li>client application key: <tt class="longboi">9ba90dbce8857bc1fcb81d41a0465cfe</tt>
+    <li>client application IV: <tt class="longboi">682219974631fa0656ee4eff</tt>
+    <li>client record number key: <tt class="longboi">5cb5bd8bac29777c650c0dde22d16d47</tt>
+    <li>server record number key: <tt class="longboi">57ba02596c6a1352d7fe8416c7e17d5a</tt>
+    </ul>
+</div>
+</div>
+</div>

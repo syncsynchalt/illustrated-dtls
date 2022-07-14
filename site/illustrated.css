@@ -111,16 +111,6 @@ xtt {
     border: 2px solid transparent;
 }
 
-.record.embedded {
-    margin-left: 2em;
-}
-
-.embed-arrow {
-    position: absolute;
-    font-size: 2em;
-    color: #888;
-}
-
 .illustrated .server.record .rec-label:before {
     content: "❰ ";
     color: #888;
