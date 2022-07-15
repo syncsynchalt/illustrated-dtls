@@ -31,7 +31,7 @@
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>
             <tr><td></td><td><xtt>0</xtt></td><td>Connection ID field not present in header</td></tr>
             <tr><td></td><td><xtt>1</xtt></td><td>Sequence number in header is 2 bytes long</td></tr>
-            <tr><td></td><td><xtt>1</xtt></td><td>2-byte length field is present in header</td></tr>
+            <tr><td></td><td><xtt>1</xtt></td><td>Length field is present in header</td></tr>
             <tr><td>LSB</td><td><xtt>10</xtt></td><td>Encryption epoch 2 - handshake keys</td></tr>
             </table>
         </div>
@@ -47,7 +47,7 @@
 00 00
         </span>
         <div class="explanation">
-            <button class="hp-toggle">Disable record number encryption</button><br>
+            <button class="hp-toggle"></button><br>
             The record number of the packet is encrypted, to prevent middleware
             from interpreting or interfering with the sequencing of packets.
             <br><br>

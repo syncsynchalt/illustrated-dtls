@@ -20,8 +20,9 @@
     // events
 
     ill.unselectAllRecords = () => {
-        [].forEach.call(document.querySelectorAll(".illustrated .record.selected, .illustrated .calculation.selected"),
-        (el) => {
+        document.querySelectorAll(
+            ".illustrated .record.selected, .illustrated .calculation.selected"
+        ).forEach(el => {
             el.classList.remove("selected");
         });
     };
@@ -51,7 +52,7 @@
     };
 
     ill.closeAllCode = () => {
-        [].forEach.call(document.querySelectorAll("codesample.show"), (el) => {
+        document.querySelectorAll("codesample.show").forEach(el => {
             el.classList.remove("show");
         });
     };
@@ -80,7 +81,7 @@
 
     ill.injectLabels = () => {
         let els = document.querySelectorAll(".string > .explanation, .decryption > .explanation");
-        [].forEach.call(els, (expl) => {
+        els.forEach(expl => {
             let label = expl.parentNode.querySelector(".label"),
                 h4 = document.createElement("h4");
             h4.appendChild(document.createTextNode(label.textContent));
@@ -90,15 +91,13 @@
 
     ill.toggleHeaderProtection = () => {
         let els = document.querySelectorAll(".bytes.protected");
-        [].forEach.call(els, (el) => { el.classList.toggle("hp-disabled"); });
+        els.forEach(el => { el.classList.toggle("hp-disabled"); });
         els = document.querySelectorAll(".bytes.unprotected");
-        [].forEach.call(els, (el) => { el.classList.toggle("hp-disabled"); });
+        els.forEach(el => { el.classList.toggle("hp-disabled"); });
         let btns = document.querySelectorAll("button.hp-toggle");
-        if (btns[0].textContent === "Disable header protection") {
-            [].forEach.call(btns, (el) => { el.textContent = "Enable header protection"; });
-        } else {
-            [].forEach.call(btns, (el) => { el.textContent = "Disable header protection"; });
-        }
+        const b = btns[0];
+        const text = b.textContent === b.dataset.declbl ? b.dataset.enclbl : b.dataset.declbl;
+        btns.forEach(el => { el.textContent = text; });
     };
 
     ill.printMode = () => {
@@ -108,21 +107,21 @@
         inject.setAttribute("href", "printmode.css");
         document.head.appendChild(inject);
         // open everything up
-        [].forEach.call(document.querySelectorAll(".record, .calculation"), (el) => {
+        document.querySelectorAll(".record, .calculation").forEach(el => {
             el.classList.add("selected");
             el.classList.add("annotate");
         });
-        [].forEach.call(document.querySelectorAll("codesample"), (el) => {
+        document.querySelectorAll("codesample").forEach(el => {
             el.classList.add("show");
         });
-        [].forEach.call(document.querySelectorAll("*"), (el) => {
+        document.querySelectorAll("*").forEach(el => {
             el.onclick = null;
         });
     };
 
 
     window.onload = () => {
-        [].forEach.call(document.querySelectorAll(".record, .calculation"), (el) => {
+        document.querySelectorAll(".record, .calculation").forEach(el => {
             el.onclick = (event) => {
                 if (el === event.target && event.offsetY < 60) {
                     ill.toggleRecord(el, event);
@@ -131,26 +130,29 @@
                 }
             };
         });
-        [].forEach.call(document.querySelectorAll(".rec-label"), (el) => {
+        document.querySelectorAll(".rec-label").forEach(el => {
             el.onclick = (event) => {
                 ill.toggleRecord(el.parentNode, event);
             };
         });
-        [].forEach.call(document.querySelectorAll("button.hp-toggle"), (el) => {
+        document.querySelectorAll("button.hp-toggle").forEach(el => {
+            el.dataset.enclbl = "Encrypt record numbers";
+            el.dataset.declbl = "Decrypt record numbers";
+            el.innerText = el.dataset.declbl;
             el.onclick = (event) => {
                 ill.toggleHeaderProtection();
                 ill.cancel(event);
             };
         });
-        [].forEach.call(document.querySelectorAll(".record"), (el) => {
+        document.querySelectorAll(".record").forEach(el => {
             ill.addToggleAnnotations(el);
         });
-        [].forEach.call(document.querySelectorAll("codesample"), (el) => {
+        document.querySelectorAll("codesample").forEach(el => {
             ill.addShowCode(el);
             el.addEventListener("click", (event) => { ill.showCode(el, event) });
         });
-        [].forEach.call(document.querySelectorAll(".bytes.protected"), (el) => {
-            el.setAttribute("title", "modified by header protection");
+        document.querySelectorAll(".bytes.protected").forEach(el => {
+            el.setAttribute("title", "encrypted header number");
         });
         ill.injectLabels();
         ill.injectEmbedArrows();
@@ -161,7 +163,7 @@
         if (e.key === "Escape" || e.key === "Esc") {
             els = document.querySelectorAll(".record.annotate");
             if (els.length) {
-                [].forEach.call(els, (rec) => { rec.classList.remove("annotate"); });
+                els.forEach(rec => { rec.classList.remove("annotate"); });
             } else {
                 ill.unselectAllRecords();
             }
