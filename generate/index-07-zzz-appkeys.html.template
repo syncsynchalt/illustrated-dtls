@@ -29,7 +29,7 @@
   )| openssl sha256
 
 77ff5eee528abc269960b0ea316eb8578dc8325d86ec1336ffe4b2941e26d82b
-    </code></pre>
+</code></pre>
     </codesample>
 
     We then feed the hash and the handshake secret into a set of
