@@ -1,3 +1,24 @@
+:root {
+    --chunky-text: #555;
+    --server-bg: hsl(190, 60%, 75%);
+    --client-bg: hsl(142, 61%, 82%);
+    --server-bg-hover: hsl(288, 28%, 83%);
+    --client-bg-hover: hsl(288, 31%, 80%);
+
+    --prot-text: #555;
+    --prot-text-shadow: #222;
+
+    --sam-btn0: hsl(190, 25%, 40%);
+    --sam-btn9: hsl(190, 30%, 45%);
+    --sam-btn-shadow: hsl(180, 41%, 38%);
+    --sam-btn-inset: hsl(180, 52%, 45%);
+
+    --act-btn0: #faa51a;
+    --act-btn9: #f47a20;
+    --act-hov-btn0: #f88e11;
+    --act-hov-btn9: #f06015;
+}
+
 /* remove focus rings for non-keyboard users */
 body:not(.user-is-tabbing) button:focus,
 body:not(.user-is-tabbing) input:focus,
@@ -85,11 +106,11 @@ tt.longboi {
 }
 
 .server {
-    background-color: #D0E8F5;
+    background-color: var(--server-bg);
 }
 
 .client {
-    background-color: #D8EDCF;
+    background-color: var(--client-bg);
 }
 
 xtt {
@@ -113,19 +134,16 @@ xtt {
 
 .illustrated .server.record .rec-label:before {
     content: "❰ ";
-    color: #888;
+    color: var(--chunky-text);
 }
 .illustrated .client.record .rec-label:before {
     content: "❱ ";
-    color: #888;
+    color: var(--chunky-text);
 }
 .illustrated .calculation .rec-label:before {
-    /* content: "÷ "; */
-    /* content: "∻ "; */
-    /* content: "≑ "; */
     content: "± ";
     font-weight: bold;
-    color: #888;
+    color: var(--chunky-text);
 }
 
 .rec-label {
@@ -155,7 +173,7 @@ xtt {
 }
 .illustrated .record.selected .rec-label:after,
 .illustrated .calculation.selected .rec-label:after {
-    color: #888;
+    color: var(--chunky-text);
     content: " ×";
     font-weight: bold;
     cursor: pointer;
@@ -209,10 +227,10 @@ xtt {
 /***** .record-data *****/
 
 .client .record-data .string .bytes:hover {
-    background-color: #FFEFD5;
+    background-color: var(--client-bg-hover);
 }
 .server .record-data .string .bytes:hover {
-    background-color: #FFEFD5;
+    background-color: var(--server-bg-hover);
 }
 .record.annotate .record-data .string:hover {
     color: inherit;
@@ -293,12 +311,12 @@ xtt {
 .record .decryption > .label:before {
     content: "⬇ ";
     font-weight: bold;
-    color: #888;
+    color: var(--chunky-text);
 }
 .record .decryption > .label:after {
     content: " ⬇";
     font-weight: bold;
-    color: #888;
+    color: var(--chunky-text);
 }
 
 .string .bytes {
@@ -314,13 +332,13 @@ xtt {
 }
 
 .string .bytes.protected {
-    color: #655;
-    text-shadow: 1px 1px 3px grey;
+    color: var(--prot-text);
+    text-shadow: 1px 1px 3px var(--prot-text-shadow);
 }
-.string .bytes.unprotected{
+.string .bytes.unprotected {
     display: none;
 }
-.string .bytes.protected{
+.string .bytes.protected {
     display: inline;
 }
 .string .bytes.unprotected.hp-disabled {
@@ -380,22 +398,22 @@ codesample pre {
 codesample button.show-code {
     display: block;
     clear: both;
-    box-shadow: inset 0 1px 3px 0 #91b8b3;
-    background: #768d87 linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+    box-shadow: inset 0 0 5px 0 var(--sam-btn-inset);
+    background: linear-gradient(to bottom, var(--sam-btn0) 1%, var(--sam-btn0) 100%);
     border-radius:5px;
     border: 1px solid #566963;
     cursor: pointer;
-    color: #ffffff;
+    color: white;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
     font-weight: bold;
     padding: 11px 23px;
     text-decoration: none;
-    text-shadow: 0 -1px 0 #2b665e;
+    text-shadow: 0 -1px 0 var(--sam-btn-shadow);
 }
 
 codesample button.show-code:hover:hover {
-    background: #6c7c7c linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+    background: linear-gradient(to bottom, var(--sam-btn0) 1%, var(--sam-btn9) 100%);
 }
 codesample button.show-code:active {
     position: relative;
@@ -427,14 +445,11 @@ button.annotate-toggle {
 
     color: #fff;
     border: solid 1px #da7c0c;
-    background: #f78d1d;
-    background: linear-gradient(180deg, #faa51a 1%, #f47a20 100%);
+    background: linear-gradient(180deg, var(--act-btn0) 1%, var(--act-btn9) 100%);
 }
 button.annotate-toggle:hover {
     text-decoration: none;
-
-    background: #f47c20;
-    background: linear-gradient(180deg, #f88e11 1%, #f06015 100%);
+    background: linear-gradient(180deg, var(--act-hov-btn0) 1%, var(--act-hov-btn9) 100%);
 }
 button.annotate-toggle:active {
     position: relative;
@@ -460,14 +475,11 @@ button.hp-toggle {
 
     color: #fff;
     border: solid 1px #da7c0c;
-    background: #f78d1d;
-    background: linear-gradient(180deg, #faa51a 1%, #f47a20 100%);
+    background: linear-gradient(180deg, var(--act-btn0) 1%, var(--act-btn9) 100%);
 }
 button.hp-toggle:hover {
     text-decoration: none;
-
-    background: #f47c20;
-    background: linear-gradient(180deg, #f88e11 1%, #f06015 100%);
+    background: linear-gradient(180deg, var(--act-hov-btn0) 1%, var(--act-hov-btn9) 100%);
 }
 button.hp-toggle:active {
     position: relative;
@@ -518,7 +530,6 @@ button.hp-toggle:active {
 }
 .header a.this-page:before {
     content: "❧\00a0";
-    /* content: "•\00a0"; */
 }
 .header a, .header span {
     margin-right: 0.5em;

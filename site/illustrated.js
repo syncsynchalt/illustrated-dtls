@@ -155,7 +155,6 @@
             el.setAttribute("title", "encrypted header number");
         });
         ill.injectLabels();
-        ill.injectEmbedArrows();
     };
 
     window.onkeyup = (e) => {
