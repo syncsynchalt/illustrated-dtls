@@ -26,5 +26,8 @@ site: ill-generator hkdf ill12 ill13
 	cp -a hkdf/hkdf-dtls ../site/files/hkdf-dtls.sh
 	cp -a ill12/site/files/curve25519-mult.c ../site/files/
 
+dist:
+	cd .. && $(MAKE) dist
+
 clean:
 	rm -rf ill-generator ill12 ill13 hkdf
