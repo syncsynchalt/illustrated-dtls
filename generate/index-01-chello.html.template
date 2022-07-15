@@ -132,7 +132,7 @@ pub:
     </span>
 
     <span class="string">
-        <span class="label">Client Version (Legacy)</span>
+        <span class="label">Legacy Client Version</span>
         <span class="bytes">
 %next 2
 %bytes

@@ -30,7 +30,7 @@
             <table class="bits">
             <thead><tr>
               <th></th>
-              <th>Val</th>
+              <th>Value</th>
               <th>Meaning</th>
             </tr></thead>
             <tr><td>MSB</td><td><xtt>001</xtt></td><td>Fixed bits</td></tr>

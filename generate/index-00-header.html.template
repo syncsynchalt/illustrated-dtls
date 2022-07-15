@@ -53,10 +53,7 @@
 <div class="container">
 
     <h3>Every byte explained and reproduced</h3>
-
-
     <div class="outerblock" style="margin-top: 0.5em">
-    <p>DTLS is a secure datagram-based communication protocol.
 
     <p>In this demonstration a client connects to a server,
     negotiates a DTLS 1.3 connection, sends "ping",

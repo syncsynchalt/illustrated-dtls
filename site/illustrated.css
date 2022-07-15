@@ -356,6 +356,15 @@ xtt {
     text-align: center;
 }
 
+.bits {
+    border-collapse: collapse;
+}
+.bits td, .bits th {
+    padding: 0 0.5em;
+}
+.bits td {
+    border-top: 1px solid #aaa;
+}
 /***** processblock *****/
 
 processblock {
