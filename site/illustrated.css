@@ -70,7 +70,6 @@ h5 {
 pre {
     margin: 1em 0;
     overflow: scroll;
-    -ms-overflow-style: scrollbar;
 }
 
 pre code {
@@ -82,7 +81,6 @@ pre code {
     padding: 0.5em;
     border-radius: 5px;
     overflow: scroll;
-    -ms-overflow-style: scrollbar;
 }
 
 ol, ul, dl {
@@ -253,8 +251,6 @@ xtt {
     line-height: 1.2;
     white-space: nowrap;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     top: -28px;
     box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px;
