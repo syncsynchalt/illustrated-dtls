@@ -11,15 +11,16 @@
 %file ../captures/caps/07-fin-chs-prot
 <span class="record-data">
     <span class="string">
-        <span class="label">Unified Header Byte</span>
+        <span class="label">Header Info Byte</span>
         <span class="bytes">
 %next 1
 %bytes
         </span>
         <div class="explanation">
-            An encrypted DTLS packet starts with the "Unified Header". This
-            byte gives information on the structure and decryption epoch of
-            the header and packet.
+            <p>
+            An encrypted DTLS packet starts with the "Unified Header". This first byte
+            of the header gives information on the structure and decryption of
+            the rest of the header and packet.
             <p>
             The bits in the value %x0 have the following meaning:
             <table class="bits">
