@@ -40,13 +40,19 @@ body {
     overflow: auto;
 }
 
-/* hide keys when there is no room for them */
 @media (max-width: 600px) {
     .illustration {
+        /* hide keys when there is no room for them */
         display: none !important;
     }
     .print-mode {
         display: none;
+    }
+    html, body {
+        overflow-x: hidden;
+    }
+    body {
+        position: relative
     }
 }
 
