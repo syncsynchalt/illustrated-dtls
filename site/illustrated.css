@@ -171,6 +171,7 @@ xtt {
 .calculation.selected .rec-label {
     padding: 0 0 10px 0;
     width: 0;
+    overflow: inherit;
 }
 .illustrated .record.selected .rec-label:after,
 .illustrated .calculation.selected .rec-label:after {
