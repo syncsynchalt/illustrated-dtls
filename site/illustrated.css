@@ -6,17 +6,20 @@
     --client-bg-hover: hsl(288, 31%, 80%);
 
     --prot-text: #555;
-    --prot-text-shadow: #222;
+    --prot-text-shadow: #555;
 
-    --sam-btn0: hsl(190, 25%, 40%);
-    --sam-btn9: hsl(190, 30%, 45%);
-    --sam-btn-shadow: hsl(180, 41%, 38%);
+    --sam-btn0: hsl(190, 30%, 45%);
+    --sam-btn9: hsl(190, 25%, 40%);
+    --sam-hov-btn0: hsl(190, 30%, 40%);
+    --sam-hov-btn9: hsl(190, 25%, 35%);
+    --sam-btn-shadow: hsl(180, 41%, 28%);
     --sam-btn-inset: hsl(180, 45%, 40%);
 
-    --act-btn0: #faa51a;
-    --act-btn9: #f47a20;
-    --act-hov-btn0: #f88e11;
-    --act-hov-btn9: #f06015;
+    --act-btn0: hsl(37, 96%, 54%);
+    --act-btn9: hsl(25, 91%, 54%);
+    --act-hov-btn0: hsl(32, 94%, 52%);
+    --act-hov-btn9: hsl(21, 88%, 51%);
+    --act-btn-shadow: hsl(25, 91%, 40%);
 }
 
 /* remove focus rings for non-keyboard users */
@@ -408,7 +411,7 @@ codesample button.show-code {
     display: block;
     clear: both;
     box-shadow: inset 0 0 5px 0 var(--sam-btn-inset);
-    background: linear-gradient(to bottom, var(--sam-btn0) 1%, var(--sam-btn0) 100%);
+    background: linear-gradient(to bottom, var(--sam-btn0) 1%, var(--sam-btn9) 100%);
     border-radius:5px;
     border: 1px solid #566963;
     cursor: pointer;
@@ -418,11 +421,11 @@ codesample button.show-code {
     font-weight: bold;
     padding: 11px 23px;
     text-decoration: none;
-    text-shadow: 0 -1px 0 var(--sam-btn-shadow);
+    text-shadow: 0 1px 0 var(--sam-btn-shadow);
 }
 
 codesample button.show-code:hover:hover {
-    background: linear-gradient(to bottom, var(--sam-btn0) 1%, var(--sam-btn9) 100%);
+    background: linear-gradient(to bottom, var(--sam-hov-btn0) 1%, var(--sam-hov-btn9) 100%);
 }
 codesample button.show-code:active {
     position: relative;
@@ -447,8 +450,9 @@ button.annotate-toggle {
     text-decoration: none;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1em;
+    font-weight: bold;
     padding: .4em 1.7em .45em;
-    text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    text-shadow: 0 1px 0 var(--act-btn-shadow);
     border-radius: .5em;
     box-shadow: 1px 1px 1px rgba(0,0,0,.3);
 
@@ -477,8 +481,9 @@ button.hp-toggle {
     text-decoration: none;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1em;
+    font-weight: bold;
     padding: .4em 1.7em .45em;
-    text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    text-shadow: 0 1px 0 var(--act-btn-shadow);
     border-radius: .5em;
     box-shadow: 1px 1px 1px rgba(0,0,0,.3);
 
