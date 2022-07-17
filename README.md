@@ -1,6 +1,6 @@
 # The Illustrated DTLS Connection
 
-Will be published at https://dtls.xargs.org
+Published at https://dtls.xargs.org
 
 - `site/`: page source for the finished product
 - `server/server.c`: server code
