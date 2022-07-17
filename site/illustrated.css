@@ -14,12 +14,14 @@
     --sam-hov-btn9: hsl(190, 25%, 35%);
     --sam-btn-shadow: hsl(180, 41%, 28%);
     --sam-btn-inset: hsl(180, 45%, 40%);
+    --sam-btn-border: hsl(161, 10%, 37%);
 
     --act-btn0: hsl(37, 96%, 54%);
     --act-btn9: hsl(25, 91%, 54%);
     --act-hov-btn0: hsl(32, 94%, 52%);
     --act-hov-btn9: hsl(21, 88%, 51%);
     --act-btn-shadow: hsl(25, 91%, 40%);
+    --act-btn-border: hsl(33, 90%, 45%);
 }
 
 /* remove focus rings for non-keyboard users */
@@ -410,10 +412,10 @@ codesample button.show-code {
     box-shadow: inset 0 0 5px 0 var(--sam-btn-inset);
     background: linear-gradient(to bottom, var(--sam-btn0) 1%, var(--sam-btn9) 100%);
     border-radius:5px;
-    border: 1px solid #566963;
+    border: 1px solid var(--sam-btn-border);
     cursor: pointer;
     color: white;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 15px;
     font-weight: bold;
     padding: 11px 23px;
@@ -445,7 +447,7 @@ button.annotate-toggle {
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1em;
     font-weight: bold;
     padding: .4em 1.7em .45em;
@@ -454,7 +456,7 @@ button.annotate-toggle {
     box-shadow: 1px 1px 1px rgba(0,0,0,.3);
 
     color: #fff;
-    border: solid 1px #da7c0c;
+    border: solid 1px var(--act-btn-border);
     background: linear-gradient(180deg, var(--act-btn0) 1%, var(--act-btn9) 100%);
 }
 button.annotate-toggle:hover {
@@ -476,7 +478,7 @@ button.hp-toggle {
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1em;
     font-weight: bold;
     padding: .4em 1.7em .45em;
@@ -485,7 +487,7 @@ button.hp-toggle {
     box-shadow: 1px 1px 1px rgba(0,0,0,.3);
 
     color: #fff;
-    border: solid 1px #da7c0c;
+    border: solid 1px var(--act-btn-border);
     background: linear-gradient(180deg, var(--act-btn0) 1%, var(--act-btn9) 100%);
 }
 button.hp-toggle:hover {
