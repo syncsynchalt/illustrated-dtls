@@ -1,7 +1,9 @@
 (() => {
     "use strict";
 
-    let ill = {};
+    let ill = {
+        anchors: {}
+    };
 
     // viewports etc
 
@@ -32,8 +34,10 @@
         ill.unselectAllRecords();
         if (!selected) {
             element.classList.add("selected");
+            if (event) { ill.changeHash(element.dataset.anchor); }
         } else {
             ill.closeAllCode();
+            if (event) { ill.changeHash(""); }
         }
         ill.cancel(event);
         ill.ensureElementInView(element);
@@ -42,6 +46,7 @@
     ill.selectRecord = (element, event) => {
         ill.unselectAllRecords();
         element.classList.add("selected");
+        if (event) { ill.changeHash(element.dataset.anchor); }
         ill.cancel(event);
         ill.ensureElementInView(element);
     };
@@ -57,8 +62,20 @@
         });
     };
 
-    ill.toggleAnnotate = (el) => {
-        el.classList.toggle("annotate");
+    ill.getAncestorAnchor = (el) => {
+        while (el && !el.dataset.anchor) {
+            el = el.parentElement;
+        }
+        return el?.dataset?.anchor;
+    };
+
+    ill.toggleAnnotate = (el, event) => {
+        let anchor = ill.getAncestorAnchor(el);
+        if (el.classList.toggle("annotate")) {
+            anchor = `${anchor}/annotated`;
+        }
+        if (event) { ill.changeHash(anchor); }
+        ill.cancel(event);
     };
 
     ill.cancel = (event) => {
@@ -71,12 +88,53 @@
         el.innerHTML = document.getElementById("showCodeTmpl").innerHTML + el.innerHTML;
     };
 
+    function htmlToElement(html) {
+        let outer = document.createElement("template");
+        outer.innerHTML = html.trim();
+        return outer.content.firstChild;
+    }
+
+    ill.addAnchors = (record) => {
+        let label = record.getElementsByClassName("rec-label");
+        label = label && label[0].textContent;
+        let count = 1;
+        if (label) {
+            label = label.toLowerCase().replaceAll(/[^a-z\d]/g, "-");
+            while (ill.anchors[label]) {
+                label = label.replaceAll(/-\d+$/g, "");
+                label = `${label}-${++count}`;
+            }
+            record.dataset.anchor = label;
+            ill.anchors[label] = record;
+            ill.anchors[`${label}/annotated`] = record;
+            record.insertBefore(
+                htmlToElement(`<a class="no-show" href="#${label}/annotated"></a>`), record.firstChild);
+            record.insertBefore(
+                htmlToElement(`<a class="no-show" href="#${label}"></a>`), record.firstChild);
+        }
+    };
+
+    ill.resolveHash = () => {
+        let hash = window.location.hash.replace(/^#/, "");
+        const rec = ill.anchors[hash];
+        if (!rec) {
+            return;
+        }
+        ill.selectRecord(rec, null);
+        if (hash.endsWith("/annotated")) {
+            const b = rec.getElementsByClassName("annotate-toggle");
+            if (b && b.length) {
+                ill.toggleAnnotate(b[0].parentElement);
+            }
+        }
+    };
+
     ill.addToggleAnnotations = (record) => {
         let expl = record.querySelector(".rec-explanation");
         let copy = document.getElementById("annotateTmpl").cloneNode(true);
         // always true (IDE warning)
-        if (copy instanceof Element) expl.insertAdjacentElement("afterend", copy);
-        copy.addEventListener('click', () => { ill.toggleAnnotate(record) });
+        if (copy instanceof Element) { expl.insertAdjacentElement("afterend", copy); }
+        copy.addEventListener("click", (e) => { ill.toggleAnnotate(record, e); });
     };
 
     ill.injectLabels = () => {
@@ -119,9 +177,19 @@
         });
     };
 
+    ill.changeHash = (hash) => {
+        let href = window.location.href.replace(/#.*/, "");
+        if (hash) {
+            window.history.replaceState({}, "", `${href}#${hash}`);
+        } else {
+            window.history.replaceState({}, "", `${href}`);
+        }
+    };
+
 
     window.onload = () => {
         document.querySelectorAll(".record, .calculation").forEach(el => {
+            ill.addAnchors(el);
             el.onclick = (event) => {
                 if (el === event.target && event.offsetY < 60) {
                     ill.toggleRecord(el, event);
@@ -149,11 +217,12 @@
         });
         document.querySelectorAll("codesample").forEach(el => {
             ill.addShowCode(el);
-            el.addEventListener("click", (event) => { ill.showCode(el, event) });
+            el.addEventListener("click", (event) => { ill.showCode(el, event); });
         });
         document.querySelectorAll(".bytes.protected").forEach(el => {
             el.setAttribute("title", "encrypted header number");
         });
+        ill.resolveHash();
         ill.injectLabels();
     };
 
@@ -162,9 +231,10 @@
         if (e.key === "Escape" || e.key === "Esc") {
             els = document.querySelectorAll(".record.annotate");
             if (els.length) {
-                els.forEach(rec => { rec.classList.remove("annotate"); });
+                els.forEach(rec => { ill.toggleAnnotate(rec, e); });
             } else {
                 ill.unselectAllRecords();
+                ill.changeHash("");
             }
         }
     };
