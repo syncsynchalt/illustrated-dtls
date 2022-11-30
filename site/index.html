@@ -9,9 +9,9 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="title" content="The Illustrated DTLS Connection"/>
     <meta name="description" content="Every byte of a DTLS connection explained and reproduced"/>
-    <link rel="stylesheet" href="frombootstrap.css"/>
-    <link rel="stylesheet" href="illustrated.css"/>
-    <script src="illustrated.js"></script>
+    <link rel="stylesheet" href="frombootstrap.css?b"/>
+    <link rel="stylesheet" href="illustrated.css?b"/>
+    <script src="illustrated.js?b"></script>
 
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content="https://dtls.xargs.org/">
@@ -529,7 +529,7 @@ pub:
             Each TLS handshake record starts with a type and a length.
             <ul>
             <li><xtt>02</xtt> - handshake record type 2 (ServerHello)
-            <li><xtt>00 00 56</xtt> - 0x56 (86) bytes of client hello data is in this handshake record.
+            <li><xtt>00 00 56</xtt> - 0x56 (86) bytes of server hello data is in this handshake record.
             </ul>
         </div>
     </span>

@@ -102,7 +102,7 @@ pub:
             Each TLS handshake record starts with a type and a length.
             <ul>
             <li><xtt>%0</xtt> - handshake record type %d0 (ServerHello)
-            <li><xtt>%1 %2 %3</xtt> - %nnn1 bytes of client hello data is in this handshake record.
+            <li><xtt>%1 %2 %3</xtt> - %nnn1 bytes of server hello data is in this handshake record.
             </ul>
         </div>
     </span>
