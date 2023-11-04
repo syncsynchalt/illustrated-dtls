@@ -9,9 +9,9 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="title" content="The Illustrated DTLS Connection"/>
     <meta name="description" content="Every byte of a DTLS connection explained and reproduced"/>
-    <link rel="stylesheet" href="frombootstrap.css?b"/>
-    <link rel="stylesheet" href="illustrated.css?b"/>
-    <script src="illustrated.js?b"></script>
+    <link rel="stylesheet" href="frombootstrap.css?b1"/>
+    <link rel="stylesheet" href="illustrated.css?b1"/>
+    <script src="illustrated.js?b1"></script>
 
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content="https://dtls.xargs.org/">
@@ -59,3 +59,9 @@
     receives "pong", then terminates the connection.
     Click below to begin exploring.
     </div>
+
+<div class="open-close-all rec-outer">
+    <button id="openCloseAll" class="annotate-toggle"
+        data-lbl-state="open" data-lbl-toggle="Close All"
+        onclick="ill.openCloseAll(this, event)">Open All</button>
+</div>
