@@ -318,7 +318,7 @@ pub:
                 <li><xtt>00 0d</xtt> - assigned value for extension "Signature Algorithms"
                 <li><xtt>%2 %3</xtt> - %nn2 bytes of "Signature Algorithms" extension data follows
                 <li><xtt>%4 %5</xtt> - %nn4 bytes of data are in the following list of algorithms
-                <li><xtt>%6 %7</xtt> - assigned value for ECDSA-SECP512r1-SHA512
+                <li><xtt>%6 %7</xtt> - assigned value for ECDSA-SECP521r1-SHA512
                 <li><xtt>%8 %9</xtt> - assigned value for ECDSA-SECP384r1-SHA384
                 <li><xtt>%10 %11</xtt> - assigned value for ECDSA-SECP256r1-SHA256
                 <li><xtt>%12 %13</xtt> - assigned value for ECDSA-SHA1
